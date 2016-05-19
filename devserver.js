@@ -14,7 +14,6 @@ module.exports =  function (opts) {
   var templatePath = opts.from;
   var alias = opts.alias;
   var cssPath = opts.cssPath;
-  var babelQuery = opts.babelQuery;
   var postProcessConfig = opts.postProcessConfig || noop;
   var keepAlive = !!opts.keepAlive;
 
@@ -30,11 +29,10 @@ module.exports =  function (opts) {
         require.resolve('webpack-hot-middleware/client') + `?path=${EVENT_PATH}`,
       ];
 
-      var webpackConfig = getWebpackConfig({from: templatePath, alias: alias, to: opts.to});
+      var webpackConfig = getWebpackConfig(opts);
       Object.keys(webpackConfig.entry).forEach(function (key) {
         webpackConfig.entry[key] = hotPrefix.concat(webpackConfig.entry[key]);
       });
-      console.log(opts, webpackConfig);
       webpackConfig.devtool = 'cheap-module-source-map';
       // prefix with "/" to make it as absolute path for memfs
       webpackConfig.output.path = '/';
@@ -48,8 +46,6 @@ module.exports =  function (opts) {
         }),
         new webpack.HotModuleReplacementPlugin()
       ];
-      var babelLoader = webpackConfig.module.loaders.find(x => x.loader.indexOf('babel-loader') > -1);
-      babelLoader.query = babelQuery || {};
 
       postProcessConfig(webpackConfig);
       var compiler = webpack(webpackConfig);

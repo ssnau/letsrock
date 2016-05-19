@@ -45,6 +45,7 @@ function getWebpackEntries(opts) {
           {
             exclude: /node_modules/,
             loader: r('babel-loader'),
+            query: opts.babelQuery,
             test: /\.(es6|js|jsx)$/
           },
           {
