@@ -7,6 +7,16 @@ function setup(app) {
     ];
     yield next;
   });
+
+  if (opts.autoMount) {
+    app.use(function *(next) {
+      var context = this;
+      var path = (context.path === '/') ? 'index' : context.path;
+      context.body = template({
+        src: rr(opts.serveFilePath + '/' + path + '/index.js')
+      });
+    });
+  }
 }
 
 var parse = require('co-body');
