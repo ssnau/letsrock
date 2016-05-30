@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "react-compiler": "./bin/react-compiler"
+    "letsrock": "./bin/letsrock"
   },
   "keywords": [],
   "author": "",
