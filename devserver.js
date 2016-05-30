@@ -166,6 +166,8 @@ module.exports =  function (opts) {
       }
     };
 
+    console.log('dev server is running. visit ' + serveFilePath + ' to see file compiled');
+
     watch({
       path: templatePath,
       name: 'devserver',

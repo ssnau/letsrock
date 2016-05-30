@@ -7,13 +7,6 @@ function setup(app) {
     ];
     yield next;
   });
-
-  if (opts.autoMount) {
-    app.use(function *(next) {
-      var response = yield this.$injector.get('response');
-      this.body = response.render();
-    });
-  }
 }
 
 var parse = require('co-body');
@@ -34,6 +27,7 @@ var responseService = function (context) {
     render: function (data, tpl, _opts) {
       var path = (context.path === '/') ? 'index' : context.path;
       _opts = Object.assign({}, _opts, opts);
+      context.type = 'text/html';
       context.body = template({
         src: rr(_opts.serveFilePath + '/' + (tpl || path) + '/index.js')
       });

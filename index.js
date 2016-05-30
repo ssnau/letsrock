@@ -22,6 +22,12 @@ if (target == 'dev' || target == 'start') {
     },
     port: opts.port
   });
+  app.addMiddleware(function *(next) {
+    yield next;
+    if (!opts.autoMount) return;
+    var response = yield this.$injector.get('response');
+    response.render();
+  });
   require('./devserver')(opts)(app);
   require('./builtin')(app);
   app.start();
