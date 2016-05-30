@@ -3,9 +3,9 @@ Start
 ----
 
 ```
-react-compiler dev
-react-compiler start
-react-compiler build
+letsrock dev
+letsrock start
+letsrock build
 ```
 
 Config
