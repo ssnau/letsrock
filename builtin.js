@@ -10,11 +10,8 @@ function setup(app) {
 
   if (opts.autoMount) {
     app.use(function *(next) {
-      var context = this;
-      var path = (context.path === '/') ? 'index' : context.path;
-      context.body = template({
-        src: rr(opts.serveFilePath + '/' + path + '/index.js')
-      });
+      var response = yield this.$injector.get('response');
+      this.body = response.render();
     });
   }
 }
@@ -34,10 +31,11 @@ var requestService = function (context) {
 }
 var responseService = function (context) {
   return {
-    render: function (data, tpl) {
+    render: function (data, tpl, _opts) {
       var path = (context.path === '/') ? 'index' : context.path;
+      _opts = Object.assign({}, _opts, opts);
       context.body = template({
-        src: rr(opts.serveFilePath + '/' + (tpl || path) + '/index.js')
+        src: rr(_opts.serveFilePath + '/' + (tpl || path) + '/index.js')
       });
     }
   };

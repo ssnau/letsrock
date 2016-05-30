@@ -32,7 +32,4 @@ if (target == 'build') {
   opts.babelQuery.plugins = [];
   var webpackConfig = require('./getWebpackConfig')(opts);
   var compiler = require('webpack')(opts);
-  compiler.compile(function() {
-    console.log(arguments);
-  });
 }

@@ -7,7 +7,9 @@ module.exports = {
   to: path.join(process.cwd(), rc.dist || 'dist'),
 
   port: rc.port || 9898,
+  
   autoMount: rc.autoMount,
+  serverRender: rc.serverRender,
 
   babelQuery: require('./babelQuery'),
 
