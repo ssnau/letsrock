@@ -33,9 +33,32 @@ if (target == 'dev' || target == 'start') {
   app.start();
 }
 
-// TODO: FIX
-if (target == 'build') {
+if (target == 'build' || target == 'watch') {
   opts.babelQuery.plugins = [];
   var webpackConfig = require('./getWebpackConfig')(opts);
-  var compiler = require('webpack')(opts);
+  var compiler = require('webpack')(webpackConfig)
+
+  compiler.plugin("done", stats => {
+    var startTime = stats.startTime;
+    var endTime = stats.endTime;
+    console.log( (endTime - startTime) + 'ms - build done!')
+  });
+  if (target == 'build') {
+    return compiler.run(function(err, stats) {
+      if (!err) return console.log('success');
+      return console.error(err);
+    })
+  }
+  return compiler.watch({
+      aggregateTimeout: 300
+    }, function(err, stats) {
+    if (err) return console.error(err);
+  });
+}
+
+if (!target) {
+  console.log('please use at least one of the sub commands');
+  console.log('- letsrock dev   : start a dev server');
+  console.log('- letsrock build : build jsx to dist folder');
+  console.log('- letsrock watch : build jsx to dist folder with watch feature enabled');
 }
