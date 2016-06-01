@@ -22,7 +22,6 @@ module.exports = postProcessBabelQuery({
     relayPreset,
     r("babel-preset-react"),
     r("babel-preset-turbo"),
-    r("babel-preset-stage-0")
   ].filter(Boolean),
   plugins: [
     [r('babel-plugin-react-transform'), {
