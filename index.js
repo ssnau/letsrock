@@ -6,6 +6,7 @@ var opts = require('./config');
 var cwd = process.cwd();
 
 require("babel-register")(require('./babelQuery'));
+var kstatic = require('koa-static-namespace');
 
 var args = argv.option([]).run();
 var target = args.targets[0];
@@ -28,22 +29,36 @@ if (target == 'dev' || target == 'start') {
     var response = yield this.$injector.get('response');
     response.render();
   });
-  require('./devserver')(opts)(app);
   require('./builtin')(app);
+  if (target == 'start' && !opts.getCDNLink) {
+    // build file first
+    console.info('building static files to ', opts.to);
+    opts.babelQuery.plugins = [];
+     getCompiler().run(function(err, stats) {
+      if (!err) return console.log('success');
+      return console.error(err);
+    });
+    // use koa-static-namespace
+    app.use(kstatic(opts.to, {namespace: opts.serveFilePath}));
+  }
+  if (target == 'dev') require('./devserver')(opts)(app);
   app.start();
 }
 
-if (target == 'build' || target == 'watch') {
-  opts.babelQuery.plugins = [];
+function getCompiler() {
   var webpackConfig = require('./getWebpackConfig')(opts);
   var compiler = require('webpack')(webpackConfig)
+  return compiler;
+}
 
+if (target == 'build' || target == 'watch') {
   compiler.plugin("done", stats => {
     var startTime = stats.startTime;
     var endTime = stats.endTime;
     console.log( (endTime - startTime) + 'ms - build done!')
   });
   if (target == 'build') {
+    opts.babelQuery.plugins = [];
     return compiler.run(function(err, stats) {
       if (!err) return console.log('success');
       return console.error(err);

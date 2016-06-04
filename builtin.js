@@ -30,7 +30,7 @@ var responseService = function (context) {
       _opts = Object.assign({}, _opts, opts);
       context.type = 'text/html';
       context.body = template({
-        src: rr(_opts.serveFilePath + '/' + (tpl || path) + '/index.js')
+        src: opts.getCDNLink ? opts.getCDNLink(tpl || path) : rr(_opts.serveFilePath + '/' + (tpl || path) + '/index.js')
       });
     }
   };

@@ -8,10 +8,12 @@ module.exports = {
 
   port: rc.port || 9898,
   
-  autoMount: rc.autoMount,
-  serverRender: rc.serverRender,
+  autoMount: rc.autoMount,       // should only use on fast prototyping
+  serverRender: rc.serverRender, // not work currently
 
   babelQuery: require('./babelQuery'),
 
-  serveFilePath: '/__files'
+  serveFilePath: '/__files' || rc.serveFilePath,
+
+  getCDNLink: rc.getCDNLink,   // user-provided fn to determine where the static file is
 };
