@@ -55,21 +55,21 @@ module.exports =  function (opts) {
 
       compiler.__doneCallbacks = [];
       compiler.__compileCallbacks = [];
-      compiler.__doneCallbacks.push(stats => {
-        if (stats.compilation.errors && stats.compilation.errors.length) {
-          console.log(stats.compilation.errors)
-        }
-        console.info(`webpack${id}: bundle is now VALID.`)
-      });
 
-      compiler.plugin("compile", __ => compiler.__compileCallbacks.forEach(cb => cb()));
+      compiler.plugin("compile", x => compiler.__compileCallbacks.forEach(cb => cb(x)));
+      compiler.plugin("done", x => compiler.__doneCallbacks.forEach(cb => cb(x)));
 
       var watching = compiler.watch({aggregateTimeout: 200}, function (err) {
         if (err) throw err;
       });
       compiler.__watching = watching;
 
-      compiler.__doneCallbacks.push(_ => console.info(`webpack${id}: bundle is now VALID.`));
+      compiler.__doneCallbacks.push(stats => {
+        if (stats.compilation.errors && stats.compilation.errors.length) {
+          console.log(stats.compilation.errors)
+        }
+        console.info(`webpack${id}: bundle is now VALID.`)
+      });
       compiler.__compileCallbacks.push(_ => {
         console.log(`webpack${id} building...`);
         eventStream.publish({action: "building"});

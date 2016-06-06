@@ -16,7 +16,7 @@ var target2 = args.targets[1];
 if (target == 'dev' || target == 'start') {
   var controllerPath = path.join(cwd, 'controller');
   var app = require('rekoa')({
-    isDevelopment: true,
+    isDevelopment: target == 'dev',
     base: cwd,
     path: {
       middleware: path.join(cwd, 'middleware'),
@@ -36,7 +36,7 @@ if (target == 'dev' || target == 'start') {
     // build file first
     console.info('building static files to ', opts.to);
     opts.babelQuery.plugins = [];
-     getCompiler().run(function(err, stats) {
+    getCompiler().run(function(err, stats) {
       if (!err) return console.log('success');
       return console.error(err);
     });
