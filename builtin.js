@@ -1,4 +1,5 @@
 var opts = require('./config');
+var co   = require('co');
 function setup(app) {
   app.use(function *(next) {
     this.pendingInjections = [
@@ -13,13 +14,13 @@ var parse = require('co-body');
 var requestService = function (context) {
   var parsed, body;
   return {
-    getBody: function * () {
+    getBody: co.wrap(function* () {
       if (!parsed) {
-        body = yield parse(context.req);
         parsed = true;
+        body = yield parse(context);
       }
       return body;
-    }
+    })
   }
 }
 var responseService = function (context) {
