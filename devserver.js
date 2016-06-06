@@ -55,7 +55,13 @@ module.exports =  function (opts) {
 
       compiler.__doneCallbacks = [];
       compiler.__compileCallbacks = [];
-      compiler.plugin("done", stats => compiler.__doneCallbacks.forEach(cb => cb(stats)));
+      compiler.__doneCallbacks.push(stats => {
+        if (stats.compilation.errors && stats.compilation.errors.length) {
+          console.log(stats.compilation.errors)
+        }
+        console.info(`webpack${id}: bundle is now VALID.`)
+      });
+
       compiler.plugin("compile", __ => compiler.__compileCallbacks.forEach(cb => cb()));
 
       var watching = compiler.watch({aggregateTimeout: 200}, function (err) {

@@ -1,6 +1,7 @@
 var path = require('path');
 var fs   = require('fs');
 var argv = require( 'argv' );
+var execSync = require('child_process').execSync;
 
 var opts = require('./config');
 var cwd = process.cwd();
@@ -10,6 +11,7 @@ var kstatic = require('koa-static-namespace');
 
 var args = argv.option([]).run();
 var target = args.targets[0];
+var target2 = args.targets[1];
 
 if (target == 'dev' || target == 'start') {
   var controllerPath = path.join(cwd, 'controller');
@@ -71,9 +73,22 @@ if (target == 'build' || target == 'watch') {
   });
 }
 
+if (target == 'init') {
+  if (!target2) return console.log('please specify you project name');
+  var base = path.join(cwd, target2);
+  console.log('create project directory');
+  execSync('mkdir -p ' + path.join(base, 'src/index'));
+  fs.createReadStream(path.join(__dirname, 'template/src/index/index.jsx')).pipe(fs.createWriteStream(path.join(base, 'src/index/index.jsx')));
+  fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
+  console.log('setup project');
+  execSync(`cd ${base} && npm init -f && npm i react react-dom --save`);
+  console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
+}
+
 if (!target) {
   console.log('please use at least one of the sub commands');
-  console.log('- letsrock dev   : start a dev server');
-  console.log('- letsrock build : build jsx to dist folder');
-  console.log('- letsrock watch : build jsx to dist folder with watch feature enabled');
+  console.log('- letsrock init project_name  : create a new project');
+  console.log('- letsrock dev                : start a dev server');
+  console.log('- letsrock build              : build jsx to dist folder');
+  console.log('- letsrock watch              : build jsx to dist folder with watch feature enabled');
 }

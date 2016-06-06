@@ -1,11 +1,17 @@
+Install
+------
+
+```
+npm install letsrock -g
+```
 
 Start
 ----
 
 ```
+letsrock init your_project
+cd your_project
 letsrock dev
-letsrock start
-letsrock build
 ```
 
 Config
@@ -30,8 +36,6 @@ service
 controller
 ```
 
-
 License
 ----
 MIT
-
