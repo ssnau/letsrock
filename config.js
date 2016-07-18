@@ -1,10 +1,11 @@
 var path =require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
-var rc = require("./getRC")(process.cwd());
+var cwd = global.getCWD();
+var rc = require("./getRC")(cwd);
 
 module.exports = {
-  from: path.join(process.cwd(), rc.src || 'src'),
-  to: path.join(process.cwd(), rc.dist || 'dist'),
+  from: path.join(cwd, rc.src || 'src'),
+  to: path.join(cwd, rc.dist || 'dist'),
 
   port: rc.port || 9898,
   

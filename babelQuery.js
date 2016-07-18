@@ -1,7 +1,7 @@
 var path =require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
 var r = name => require.resolve(name);
-var rc = require("./getRC")(process.cwd());
+var rc = require("./getRC")(global.getCWD());
 
 // if relay enabled
 var relayPreset;

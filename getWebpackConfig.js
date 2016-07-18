@@ -1,5 +1,6 @@
 var path = require('path');
 var glob = require('glob');
+var cwd = global.getCWD();
 function getEntries(templatePath) {
     templatePath = templatePath.replace(/\/$/, '');
     var entries = {};
@@ -25,7 +26,7 @@ function r(loaders) {
 
 function getWebpackEntries(opts) {
     var templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
-    var to = path.relative(process.cwd(), opts.to);
+    var to = path.relative(cwd, opts.to);
     var alias = opts.alias || {};
     return {
       entry: getEntries(templatePath),

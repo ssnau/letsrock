@@ -3,8 +3,14 @@ var fs   = require('fs');
 var argv = require( 'argv' );
 var execSync = require('child_process').execSync;
 
+function getCWD() {
+  return process.env.ROCK_DIR || process.cwd();
+};
+
+global.getCWD = getCWD;
+
 var opts = require('./config');
-var cwd = process.cwd();
+var cwd = getCWD();
 
 require("babel-register")(require('./babelQuery'));
 var kstatic = require('koa-static-namespace');
