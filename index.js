@@ -50,6 +50,7 @@ if (target == 'dev' || target == 'start') {
     app.use(kstatic(opts.to, {namespace: opts.serveFilePath}));
   }
   if (target == 'dev') require('./devserver')(opts)(app);
+  if (fs.existsSync(path.join(cwd, '_startup.js'))) require(path.join(cwd, '_startup.js'));
   app.start();
 }
 
