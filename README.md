@@ -39,6 +39,15 @@ controller
 
 if you wanna run some code at startup, please add a file named `_startup.js` under your project root folder.
 
+
+FAQ
+-----
+
+## How to specify css style for a particular page?
+
+`letsrock` use webpack to pack your stylesheet so it is safe to call `import "./index.css"` under a jsx file.
+
+
 License
 ----
 MIT
