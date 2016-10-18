@@ -38,6 +38,7 @@ if (target == 'dev' || target == 'start') {
     response.render();
   });
   require('./builtin')(app);
+  app.use(kstatic(opts.to, {namespace: opts.resourcePath}));
   if (target == 'start' && !opts.getCDNLink) {
     // build file first
     console.info('building static files to ', opts.to);
