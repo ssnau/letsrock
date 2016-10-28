@@ -1,6 +1,7 @@
 var opts = require('./config');
 var co   = require('co');
 function setup(app) {
+  console.log("please refer to " + __filename + " to see what request & response injection is");
   app.use(function *(next) {
     this.pendingInjections = [
       (injector) => injector.register('request', requestService),
@@ -20,11 +21,12 @@ var requestService = function (context) {
         body = yield parse(context);
       }
       return body;
-    })
+    });
   }
 }
 var responseService = function (context) {
   return {
+    // data is not used. (not support server side rendering..)
     render: function (data, tpl, _opts) {
       var path = (context.path === '/') ? 'index' : context.path;
       _opts = Object.assign({}, _opts, opts);

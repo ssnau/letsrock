@@ -20,6 +20,7 @@ var target = args.targets[0];
 var target2 = args.targets[1];
 
 if (target == 'dev' || target == 'start') {
+  console.log('lib path is ' + __dirname);
   var controllerPath = path.join(cwd, 'controller');
   var app = require('rekoa')({
     isDevelopment: target == 'dev',
