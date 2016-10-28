@@ -39,6 +39,18 @@ controller
 
 if you wanna run some code at startup, please add a file named `_startup.js` under your project root folder.
 
+Builtin Injectors
+-----
+
+```
+request
+ - request.getBody
+response
+ - response.render(data, tpl, opts)
+context
+app
+```
+
 
 FAQ
 -----
