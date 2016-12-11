@@ -79,6 +79,12 @@ edit `.rcrc`.
 }
 ```
 
+## How to get project root dir?
+
+```
+this.config.base
+```
+
 License
 ----
 MIT
