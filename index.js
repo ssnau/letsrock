@@ -39,7 +39,7 @@ if (target == 'dev' || target == 'start') {
     response.render();
   });
   require('./builtin')(app);
-  app.use(kstatic(opts.to, {namespace: opts.resourcePath}));
+  app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res"}));  // static resource folder
   if (target == 'start' && !opts.getCDNLink) {
     // build file first
     console.info('building static files to ', opts.to);
@@ -92,6 +92,10 @@ if (target == 'init') {
   console.log('setup project');
   execSync(`cd ${base} && npm init -f && npm i react react-dom --save`);
   console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
+}
+
+if (target == 'where') {
+  console.log(__dirname);
 }
 
 if (!target) {

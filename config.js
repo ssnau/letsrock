@@ -16,7 +16,5 @@ module.exports = {
 
   serveFilePath: '/__files' || rc.serveFilePath,
 
-  resourcePath: '/_res' || rc.resourcePath,
-
   getCDNLink: rc.getCDNLink,   // user-provided fn to determine where the static file is
 };

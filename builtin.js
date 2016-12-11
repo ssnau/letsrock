@@ -21,7 +21,7 @@ var requestService = function (context) {
         body = yield parse(context);
       }
       return body;
-    });
+    })
   }
 }
 var responseService = function (context) {
@@ -42,6 +42,12 @@ function template(opts) {
   return `<!DOCTYPE html>
 <html>
   <head>
+  <script>
+  window.$res = function (path) {
+    var p =  (path.indexOf('/') == 0) ? path.slice(1) : path;
+    return ('PLACEHOLDER', ('/_res/')) + p;
+  };
+  </script>
   </head>
   <body>
     <div id="app"></div>

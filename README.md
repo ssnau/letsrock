@@ -59,6 +59,13 @@ FAQ
 
 `letsrock` use webpack to pack your stylesheet so it is safe to call `import "./index.css"` under a jsx file.
 
+## Where to put static files?
+
+create a folder named "/_res" and put your files under this file.
+
+```
+<img src={$res("/head.png")} />
+```
 
 License
 ----
