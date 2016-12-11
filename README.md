@@ -67,6 +67,18 @@ create a folder named "/_res" and put your files under this file.
 <img src={$res("/head.png")} />
 ```
 
+## How to config head metas?
+
+edit `.rcrc`.
+
+```javascript
+{
+  "metas": `
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  `
+}
+```
+
 License
 ----
 MIT
