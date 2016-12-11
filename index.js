@@ -19,15 +19,18 @@ var args = argv.option([]).run();
 var target = args.targets[0];
 var target2 = args.targets[1];
 
+var controllerPath = path.join(cwd, 'controller');
+var middlewarePath = path.join(cwd, 'middleware');
+var servicePath = path.join(cwd, 'service');
+
 if (target == 'dev' || target == 'start') {
   console.log('lib path is ' + __dirname);
-  var controllerPath = path.join(cwd, 'controller');
   var app = require('rekoa')({
     isDevelopment: target == 'dev',
     base: cwd,
     path: {
-      middleware: path.join(cwd, 'middleware'),
-      service: path.join(cwd, 'service'),
+      middleware: middlewarePath,
+      service: servicePath,
       controller: controllerPath 
     },
     port: opts.port
@@ -91,6 +94,7 @@ if (target == 'init') {
   fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
   console.log('setup project');
   execSync(`cd ${base} && npm init -f && npm i react react-dom --save`);
+  execSync(`mkdir ${controllerPath} && mkdir ${middlewarePath} && mkdir ${servicePath}`);
   console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
 }
 
