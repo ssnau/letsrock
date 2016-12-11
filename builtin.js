@@ -29,7 +29,7 @@ var responseService = function (context) {
     // data is not used. (not support server side rendering..)
     render: function (data, tpl, _opts) {
       var path = (context.path === '/') ? 'index' : context.path;
-      _opts = Object.assign({}, _opts, opts);
+      _opts = Object.assign({}, opts, _opts);
       context.type = 'text/html';
       context.body = template({
         src: opts.getCDNLink ? opts.getCDNLink(tpl || path) : rr(_opts.serveFilePath + '/' + (tpl || path) + '/index.js'),
