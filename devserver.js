@@ -45,7 +45,7 @@ module.exports =  function (opts) {
           }
         }),
         new webpack.HotModuleReplacementPlugin()
-      ];
+      ].concat(webpackConfig.plugins).filter(Boolean);
 
       postProcessConfig(webpackConfig);
       var compiler = webpack(webpackConfig);

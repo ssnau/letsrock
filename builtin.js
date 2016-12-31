@@ -59,6 +59,7 @@ var responseService = function (context) {
       context.type = 'text/html';
       context.body = template({
         src: opts.getCDNLink ? opts.getCDNLink(tpl_path) : rr(_opts.serveFilePath + '/' + (tpl_path) + '/index.js'),
+        common:  opts.getCDNLink ? opts.getCDNLink('_commons.js') : rr(_opts.serveFilePath + '/_commons.js'),
         metas: metas,
         data
       });
@@ -98,6 +99,7 @@ function template(opts) {
     <script>
     window._STATE = ${JSON.stringify(opts.data || {})};
     </script>
+    <script src="${opts.common}"></script>
     <script src="${opts.src}"></script>
   </body>
 </html>

@@ -61,7 +61,7 @@ if (target == 'dev' || target == 'start') {
 }
 
 function getCompiler() {
-  var webpackConfig = require('./getWebpackConfig')(opts);
+  var webpackConfig = require('./getWebpackConfig')(opts, {isOnline: true});
   var compiler = require('webpack')(webpackConfig)
   return compiler;
 }

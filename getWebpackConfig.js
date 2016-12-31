@@ -1,6 +1,7 @@
 var path = require('path');
 var glob = require('glob');
 var cwd = global.getCWD();
+var webpack = require('webpack');
 function getEntries(templatePath) {
     templatePath = templatePath.replace(/\/$/, '');
     var entries = {};
@@ -24,12 +25,16 @@ function r(loaders) {
   return require.resolve(loaders);
 }
 
-function getWebpackEntries(opts) {
+function getWebpackEntries(opts, ext) {
     var templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
     var to = path.relative(cwd, opts.to);
     var alias = opts.alias || {};
+
+    var isOnline = (ext || {}).isOnline;
+    var entries =  getEntries(templatePath);
+    console.log(JSON.stringify(entries, null, 2));
     return {
-      entry: getEntries(templatePath),
+      entry: entries,
       module: {
         // Disable handling of unknown requires
         unknownContextRegExp: /$^/,
@@ -76,6 +81,10 @@ function getWebpackEntries(opts) {
         extensions: ['', '.js', '.jsx'],
         alias: alias
       },
+			plugins: [
+				new webpack.optimize.CommonsChunkPlugin("_commons.js", Object.keys(entries)),
+				isOnline ? new webpack.optimize.UglifyJsPlugin({minimize: true}) : null,
+			].filter(Boolean),
       externals: [
         {
           config: "var {} " // 对于client端，config是空白
