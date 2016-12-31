@@ -25,6 +25,7 @@ var servicePath = path.join(cwd, 'service');
 
 if (target == 'dev' || target == 'start') {
   console.log('lib path is ' + __dirname);
+  global.__IS_DEV__ = true;
   var app = require('rekoa')({
     isDevelopment: target == 'dev',
     base: cwd,

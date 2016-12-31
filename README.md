@@ -79,11 +79,65 @@ edit `.rcrc`.
 }
 ```
 
+If you only want your current page use the meta, you can create a file "meta.js" under your page folder.
+
+```
+module.exports = {
+  metas: `
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    .good {
+      color: red;
+    }
+    </style>
+  `
+};
+```
+
 ## How to get project root dir?
 
 ```
 this.config.base
 ```
+
+## How to get request body?
+
+inject `request` object in your controller.
+
+```
+
+async function (request, response) {
+  var body = await request.getBody();
+}
+```
+
+## How to response in JSON?
+
+```
+response.ok({
+  name: 'jack',
+  age: 18
+});
+// will get: {status: 0, data: {name: 'jack', age: 18}}
+response.fail({
+  msg: 'you do not have the right to do it'
+});
+// will get: {status: 1, msg: 'you do not have the right to do it'}
+response.fail({
+  status: 9,
+  msg: 'internal error'
+});
+// will get: {status: 9, msg: 'internal error'}
+response.json({
+  name: 'jack',
+  age: 18
+});
+// will get: {name: 'jack', age: 18}
+```
+
+## How how get render data in client?
+
+look for "window._STATE" variable.
 
 License
 ----
