@@ -22,6 +22,7 @@ var target2 = args.targets[1];
 var controllerPath = path.join(cwd, 'controller');
 var middlewarePath = path.join(cwd, 'middleware');
 var servicePath = path.join(cwd, 'service');
+var MAX_AGE = 3153600000;
 
 if (target == 'dev' || target == 'start') {
   console.log('lib path is ' + __dirname);
@@ -43,7 +44,7 @@ if (target == 'dev' || target == 'start') {
     response.render();
   });
   require('./builtin')(app);
-  app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res"}));  // static resource folder
+  app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res", maxage: MAX_AGE}));  // static resource folder
   if (target == 'start' && !opts.getCDNLink) {
     // build file first
     console.info('building static files to ', opts.to);
@@ -53,7 +54,7 @@ if (target == 'dev' || target == 'start') {
       return console.error(err);
     });
     // use koa-static-namespace
-    app.use(kstatic(opts.to, {namespace: opts.serveFilePath}));
+    app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
   }
   if (target == 'dev') require('./devserver')(opts)(app);
   if (fs.existsSync(path.join(cwd, '_startup.js'))) require(path.join(cwd, '_startup.js'));

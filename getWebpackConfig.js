@@ -32,7 +32,6 @@ function getWebpackEntries(opts, ext) {
 
     var isOnline = (ext || {}).isOnline;
     var entries =  getEntries(templatePath);
-    console.log(JSON.stringify(entries, null, 2));
     return {
       entry: entries,
       module: {

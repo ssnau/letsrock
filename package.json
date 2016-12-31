@@ -28,7 +28,7 @@
     "empty-loader": "^1.0.1",
     "glob": "^7.0.3",
     "json-loader": "^0.5.4",
-    "koa-static-namespace": "^2.0.0",
+    "koa-static-namespace": "^2.0.1",
     "memory-fs": "^0.3.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
