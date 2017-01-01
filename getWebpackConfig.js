@@ -82,8 +82,17 @@ function getWebpackEntries(opts, ext) {
         alias: alias
       },
 			plugins: [
-				new webpack.optimize.CommonsChunkPlugin("_commons.[hash].js", Object.keys(entries)),
+        isOnline ? new webpack.DefinePlugin({
+          'process.env': {
+            NODE_ENV: JSON.stringify('production')
+          }
+        }) : null,
 				isOnline ? new webpack.optimize.UglifyJsPlugin({minimize: true}) : null,
+
+        new webpack.optimize.CommonsChunkPlugin({
+              name: "_commons",
+              minChunks: 2
+        }),
 				function() {
 					this.plugin("done", function(stats) {
             global.HASH = stats.hash;
