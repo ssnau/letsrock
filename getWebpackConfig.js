@@ -74,15 +74,21 @@ function getWebpackEntries(opts, ext) {
       },
       output: {
         path: to,
-        filename: '[name].js' // Template based on keys in entry above
+        filename: '[name].[hash].js', // Template based on keys in entry above
+        chunkFilename: '[chunkhash].js'
       },
       resolve: {
         extensions: ['', '.js', '.jsx'],
         alias: alias
       },
 			plugins: [
-				new webpack.optimize.CommonsChunkPlugin("_commons.js", Object.keys(entries)),
+				new webpack.optimize.CommonsChunkPlugin("_commons.[hash].js", Object.keys(entries)),
 				isOnline ? new webpack.optimize.UglifyJsPlugin({minimize: true}) : null,
+				function() {
+					this.plugin("done", function(stats) {
+            global.HASH = stats.hash;
+					});
+				}
 			].filter(Boolean),
       externals: [
         {

@@ -69,6 +69,10 @@ module.exports =  function (opts) {
           console.log(stats.compilation.errors)
         }
         console.info(`webpack${id}: bundle is now VALID.`)
+
+        // output for debug only
+        // compiler.outputFileSystem.writeFileSync('/_stats.json', JSON.stringify(stats.toJson()));
+        global.HASH = stats.hash;
       });
       compiler.__compileCallbacks.push(_ => {
         console.log(`webpack${id} building...`);

@@ -57,9 +57,13 @@ var responseService = function (context) {
       var page_meta = getMetaFromTpl(tpl_path);
       var metas = empty_str(page_meta.merge_global_metas ? _opts.metas : '') + empty_str(page_meta.metas);
       context.type = 'text/html';
+
+      var cdnLink = opts.getCDNLink || (() => void 0);
+      var hashify = str => str.replace(/.js$/, `.${global.HASH}.js`);
       context.body = template({
-        src: opts.getCDNLink ? opts.getCDNLink(tpl_path) : rr(_opts.serveFilePath + '/' + (tpl_path) + '/index.js'),
-        common:  opts.getCDNLink ? opts.getCDNLink('_commons.js') : rr(_opts.serveFilePath + '/_commons.js'),
+        src: hashify(cdnLink(tpl_path) || rr(_opts.serveFilePath + '/' + (tpl_path) + '/index.js')),
+        common:  hashify(cdnLink('_commons.js') || rr(_opts.serveFilePath + '/_commons.js')),
+        appId: page_meta.appId || 'app',
         metas: metas,
         data
       });
@@ -95,7 +99,7 @@ function template(opts) {
   </script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id=${opts.appId}></div>
     <script>
     window._STATE = ${JSON.stringify(opts.data || {})};
     </script>
@@ -104,6 +108,10 @@ function template(opts) {
   </body>
 </html>
   `
+}
+
+function GLOBAL_HASH() {
+  return global.HASH || '';
 }
 
 function rr(src) {
