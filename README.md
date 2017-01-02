@@ -143,6 +143,10 @@ look for "window._STATE" variable.
 
 Create a file named either `favicon.ico`, `favicon.png` or `favicon.jpg` under your project root.
 
+## How can I know if it is ran by `letsrock dev`?
+
+check if `global.__IS_DEV__` is `true`.
+
 License
 ----
 MIT
