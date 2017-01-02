@@ -2,6 +2,7 @@ var opts = require('./config');
 var co   = require('co');
 var safe = require('./util').safe;
 var empty_str = require('./util').empty_str;
+var fs = require('fs');
 var path = require('path');
 function setup(app) {
   console.log("please refer to " + __filename + " to see what request & response injection is");
@@ -10,6 +11,22 @@ function setup(app) {
       (injector) => injector.register('request', requestService),
       (injector) => injector.register('response', responseService),
     ];
+    yield next;
+  });
+  // deal with favicon
+  var favicon = [
+    safe(() => fs.readFileSync(path.join(getCWD(), 'favicon.ico'))),
+    safe(() => fs.readFileSync(path.join(getCWD(), 'favicon.png'))),
+    safe(() => fs.readFileSync(path.join(getCWD(), 'favicon.jpg'))),
+    safe(() => fs.readFileSync(path.join(__dirname, 'rocking.jpg'))),
+  ].filter(Boolean)[0];
+  app.use(function *(next) {
+    if (this.path === '/favicon.ico') {
+      this.set('Cache-Control', 'public, max-age=' + 10000);
+      this.type = 'image/x-icon';
+      this.body = favicon;
+      return;
+    }
     yield next;
   });
 }
@@ -50,21 +67,20 @@ var responseService = function (context) {
     // data is not used. (not support server side rendering..)
     render: function (data, tpl, _opts) {
       var _path = (context.path === '/') ? 'index' : context.path;
-      _opts = Object.assign({}, opts, _opts);
-
       var tpl_path = tpl || _path;
-
-      var page_meta = getMetaFromTpl(tpl_path);
-      var metas = empty_str(page_meta.merge_global_metas ? _opts.metas : '') + empty_str(page_meta.metas);
-      context.type = 'text/html';
-
+      var page_meta = getMetaFromTpl(tpl_path) || {};
+      _opts = Object.assign({}, page_meta, _opts || {});
+      var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
       var cdnLink = opts.getCDNLink || (() => void 0);
       var hashify = str => str.replace(/.js$/, `.${global.HASH}.js`);
+
+      context.type = 'text/html';
       context.body = template({
-        src: hashify(cdnLink(tpl_path) || rr(_opts.serveFilePath + '/' + (tpl_path) + '/index.js')),
-        common:  hashify(cdnLink('_commons.js') || rr(_opts.serveFilePath + '/_commons.js')),
+        src: hashify(cdnLink(tpl_path) || rr(opts.serveFilePath + '/' + (tpl_path) + '/index.js')),
+        common:  hashify(cdnLink('_commons.js') || rr(opts.serveFilePath + '/_commons.js')),
         appId: page_meta.appId || 'app',
         metas: metas,
+        title: page_meta.title,
         data
       });
     },
@@ -90,6 +106,8 @@ function template(opts) {
   return `<!DOCTYPE html>
 <html>
   <head>
+  <title>${opts.title || ""}</title>
+  <link rel="shortcut icon" href="/favicon.ico" />
   ${opts.metas || ''}
   <script>
   window.$res = function (path) {
