@@ -24,7 +24,7 @@ var middlewarePath = path.join(cwd, 'middleware');
 var servicePath = path.join(cwd, 'service');
 var MAX_AGE = 3153600000;
 
-if (target == 'dev') global.__IS_DEV__ = true;
+global.__IS_DEV__ = (target == 'dev');
 
 if (target == 'dev' || target == 'start') {
   console.log('lib path is ' + __dirname);
