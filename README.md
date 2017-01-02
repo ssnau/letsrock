@@ -135,9 +135,13 @@ response.json({
 // will get: {name: 'jack', age: 18}
 ```
 
-## How how get render data in client?
+## How to get render data in client?
 
 look for "window._STATE" variable.
+
+## How to setup favicon?
+
+Create a file named either `favicon.ico`, `favicon.png` or `favicon.jpg` under your project root.
 
 License
 ----
