@@ -147,6 +147,18 @@ Create a file named either `favicon.ico`, `favicon.png` or `favicon.jpg` under y
 
 check if `global.__IS_DEV__` is `true`.
 
+## How to get unminified file online?
+
+simply add a query "?debug=1" with your url. If you dont like `debug=1` and can debug your own flag under `.rcrc`.
+
+```
+{
+  debug_flag: 3
+}
+```
+
+In such case, you should query `?debug=3`.
+
 License
 ----
 MIT

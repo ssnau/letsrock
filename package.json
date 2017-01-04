@@ -37,6 +37,7 @@
     "redbox-react": "^1.1.1",
     "rekoa": "^2.1.0",
     "style-loader": "^0.13.1",
+    "uglify-js": "^2.7.5",
     "webpack": "^1.10.5",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1"

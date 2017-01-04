@@ -2,6 +2,8 @@ var path = require('path');
 var glob = require('glob');
 var cwd = global.getCWD();
 var webpack = require('webpack');
+var uglify = require('uglify-js');
+var fs = require('fs');
 function getEntries(templatePath) {
     templatePath = templatePath.replace(/\/$/, '');
     var entries = {};
@@ -87,7 +89,7 @@ function getWebpackEntries(opts, ext) {
             NODE_ENV: JSON.stringify('production')
           }
         }) : null,
-				isOnline ? new webpack.optimize.UglifyJsPlugin({minimize: true}) : null,
+				//isOnline ? new webpack.optimize.UglifyJsPlugin({minimize: true}) : null,
 
         new webpack.optimize.CommonsChunkPlugin({
               name: "_commons",
@@ -96,6 +98,14 @@ function getWebpackEntries(opts, ext) {
 				function() {
 					this.plugin("done", function(stats) {
             global.HASH = stats.hash;
+            console.log('minifying');
+            glob
+              .sync(to + "/**")
+              .filter(f => /.js$/.test(f))
+              .filter(f => !/.min.js$/.test(f))
+              .forEach(f => {
+                fs.writeFile(f.replace(/.js$/, '.min.js'), uglify.minify(f).code);
+              });
 					});
 				}
 			].filter(Boolean),

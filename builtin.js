@@ -72,7 +72,8 @@ var responseService = function (context) {
       _opts = Object.assign({}, page_meta, _opts || {});
       var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
       var cdnLink = opts.getCDNLink || (() => void 0);
-      var hashify = str => str.replace(/.js$/, `.${global.HASH}.js`);
+      var hash = global.HASH + (context.query.debug == opts.debug_flag ? '' : '.min');
+      var hashify = str => str.replace(/.js$/, `.${hash}.js`);
 
       context.type = 'text/html';
       context.body = template({

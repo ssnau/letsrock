@@ -18,5 +18,7 @@ module.exports = {
 
   getCDNLink: rc.getCDNLink,   // user-provided fn to determine where the static file is
 
-  metas: rc.metas
+  metas: rc.metas,
+
+  debug_flag: rc.debug_flag || 1
 };
