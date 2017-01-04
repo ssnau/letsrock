@@ -98,6 +98,7 @@ function getWebpackEntries(opts, ext) {
 				function() {
 					this.plugin("done", function(stats) {
             global.HASH = stats.hash;
+            if (__IS_DEV__) return;
             console.log('minifying');
             glob
               .sync(to + "/**")
