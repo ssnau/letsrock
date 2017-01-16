@@ -1,4 +1,4 @@
-var path =require('path');
+var path = require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
 var cwd = global.getCWD();
 var rc = require("./getRC")(cwd);

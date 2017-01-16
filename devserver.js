@@ -9,8 +9,8 @@ var co = require('co');
 const FILE_PATH = '/__hmr_file';
 const EVENT_PATH = '/__hmr_event';
 var __id = 0;
-var noop = function () {};
-module.exports =  function (opts) {
+var noop = function () { };
+module.exports = function (opts) {
   var templatePath = opts.from;
   var alias = opts.alias;
   var cssPath = opts.cssPath;
@@ -59,7 +59,7 @@ module.exports =  function (opts) {
       compiler.plugin("compile", x => compiler.__compileCallbacks.forEach(cb => cb(x)));
       compiler.plugin("done", x => compiler.__doneCallbacks.forEach(cb => cb(x)));
 
-      var watching = compiler.watch({aggregateTimeout: 200}, function (err) {
+      var watching = compiler.watch({ aggregateTimeout: 200 }, function (err) {
         if (err) throw err;
       });
       compiler.__watching = watching;
@@ -76,7 +76,7 @@ module.exports =  function (opts) {
       });
       compiler.__compileCallbacks.push(_ => {
         console.log(`webpack${id} building...`);
-        eventStream.publish({action: "building"});
+        eventStream.publish({ action: "building" });
       });
 
       // event stream for hmr
@@ -199,6 +199,6 @@ module.exports =  function (opts) {
 }
 
 
-function watch (opts) {
+function watch(opts) {
   console.log('watch is not avaible');
 }

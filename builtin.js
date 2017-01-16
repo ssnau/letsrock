@@ -1,12 +1,12 @@
 var opts = require('./config');
-var co   = require('co');
+var co = require('co');
 var safe = require('./util').safe;
 var empty_str = require('./util').empty_str;
 var fs = require('fs');
 var path = require('path');
 function setup(app) {
   console.log("please refer to " + __filename + " to see what request & response injection is");
-  app.use(function *(next) {
+  app.use(function* (next) {
     this.pendingInjections = [
       (injector) => injector.register('request', requestService),
       (injector) => injector.register('response', responseService),
@@ -20,7 +20,7 @@ function setup(app) {
     safe(() => fs.readFileSync(path.join(getCWD(), 'favicon.jpg'))),
     safe(() => fs.readFileSync(path.join(__dirname, 'rocking.jpg'))),
   ].filter(Boolean)[0];
-  app.use(function *(next) {
+  app.use(function* (next) {
     if (this.path === '/favicon.ico') {
       this.set('Cache-Control', 'public, max-age=' + 10000);
       this.type = 'image/x-icon';
@@ -78,7 +78,7 @@ var responseService = function (context) {
       context.type = 'text/html';
       context.body = template({
         src: hashify(cdnLink(tpl_path) || rr(opts.serveFilePath + '/' + (tpl_path) + '/index.js')),
-        common:  hashify(cdnLink('_commons.js') || rr(opts.serveFilePath + '/_commons.js')),
+        common: hashify(cdnLink('_commons.js') || rr(opts.serveFilePath + '/_commons.js')),
         appId: page_meta.appId || 'app',
         metas: metas,
         title: page_meta.title,

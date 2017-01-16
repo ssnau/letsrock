@@ -1,4 +1,4 @@
-var path =require('path');
+var path = require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
 var r = name => require.resolve(name);
 var rc = require("./getRC")(global.getCWD());
@@ -6,7 +6,7 @@ var rc = require("./getRC")(global.getCWD());
 // if relay enabled
 var relayPreset;
 if (rc.relay) {
-  relayPreset =  {
+  relayPreset = {
     "plugins": [
       r('./relayBabelPreset')
     ]
@@ -14,7 +14,6 @@ if (rc.relay) {
 }
 var valfn = x => x;
 var postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
-
 
 module.exports = postProcessBabelQuery({
   passPerPreset: true,
