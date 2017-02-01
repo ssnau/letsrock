@@ -98,6 +98,9 @@ if (target == 'init') {
   fs.createReadStream(path.join(__dirname, 'template/src/index/index.jsx')).pipe(fs.createWriteStream(path.join(base, 'src/index/index.jsx')));
   fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
   console.log('setup project');
+  controllerPath = path.join(base, 'controller');
+  middlewarePath = path.join(base, 'middleware');
+  servicePath = path.join(base, 'service');
   execSync(`cd ${base} && npm init -f && npm i react react-dom --save`);
   execSync(`mkdir ${controllerPath} && mkdir ${middlewarePath} && mkdir ${servicePath}`);
   console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
