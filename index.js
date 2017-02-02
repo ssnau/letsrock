@@ -131,7 +131,7 @@ if (target == 'sync') {
   batch();
   watch({
     path: cwd,
-    pattern: /js/,
+    pattern: [/jsx$/, /js$/, /json$/],
     name: 'sync-watcher',
     callback: function (files) {
       batch();
