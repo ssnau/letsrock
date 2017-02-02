@@ -4,8 +4,14 @@ var safe = require('./util').safe;
 var empty_str = require('./util').empty_str;
 var fs = require('fs');
 var path = require('path');
-var HBS = require('handlebars');
+var hbs = require('handlebars');
 
+require('./hbs_helpers')(hbs, {
+  js: function (p) {
+     var cdnLink = opts.getCDNLink || (() => void 0);
+     return cdnLink(p) || rr(opts.serveFilePath + '/' + p);
+  }
+}, opts);
 
 function setup(app) {
   console.log("please refer to " + __filename + " to see what request & response injection is");
@@ -89,13 +95,6 @@ var responseService = function (context) {
       });
     },
     hbs: function (data, tpl, _opts) {
-      var hbs = HBS.create();
-      require('./hbs_helpers')(hbs, {
-        js: function (p) {
-           var cdnLink = opts.getCDNLink || (() => void 0);
-           return cdnLink(p) || rr(opts.serveFilePath + '/' + p);
-        }
-      }, context, opts);
       var _path = (context.path === '/') ? 'index' : context.path;
       var tpl_path = path.join(opts.from, tpl || _path, 'index.hbs');
       var page_meta = getMetaFromTpl(tpl_path) || {};

@@ -1,6 +1,6 @@
-module.exports = function (hbs, util, context, opts) {
+module.exports = function (hbs, util, opts) {
   hbs.registerHelper('js', function (text, xx) {
-    console.log(xx);
+    var context = this.$context;
     var hash = global.HASH + ((!__IS_DEV__ && context.query.debug != opts.debug_flag) ? '.min' : '');
     var hashify = str => str.replace(/.js$/, `.${hash}.js`);
     var url = hashify(util.js(text));
