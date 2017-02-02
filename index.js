@@ -1,6 +1,8 @@
 var path = require('path');
 var fs   = require('fs');
 var argv = require( 'argv' );
+var watch = require('xkit/fs/watch');
+var spawn = require('xkit/process/spawn');
 var execSync = require('child_process').execSync;
 
 function getCWD() {
@@ -108,6 +110,33 @@ if (target == 'init') {
 
 if (target == 'where') {
   console.log(__dirname);
+}
+
+var cpjs = () => execSync(`cp ${path.join(cwd, '*.js')} ${__dirname}`).toString();
+var cpjson = () => execSync(`cp ${path.join(cwd, '*.json')} ${__dirname}`).toString();
+var install = () => execSync(`cd ${__dirname} && npm i`);
+var batch = () => {
+  spawn('git diff --name-only HEAD')
+    .then(res => {
+      var out = res.out;
+      var files = out.split('\n').map(x => x.trim()).filter(Boolean);
+      console.log('\n******\nfiles are \n-----\n', files.join('\n'));
+      cpjs();cpjson();
+      if (files.some(f => /package.json/.test(f))) install();
+    });
+}
+if (target == 'sync') {
+  var pkgjson = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf8'));
+  if (pkgjson.name != 'letsrock') return console.log('current folder not letsrock. stopped.');
+  batch();
+  watch({
+    path: cwd,
+    pattern: /js/,
+    name: 'sync-watcher',
+    callback: function (files) {
+      batch();
+    }
+  });
 }
 
 if (!target) {

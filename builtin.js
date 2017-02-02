@@ -4,6 +4,9 @@ var safe = require('./util').safe;
 var empty_str = require('./util').empty_str;
 var fs = require('fs');
 var path = require('path');
+var HBS = require('handlebars');
+
+
 function setup(app) {
   console.log("please refer to " + __filename + " to see what request & response injection is");
   app.use(function* (next) {
@@ -62,9 +65,9 @@ function getMetaFromTpl(tpl_path) {
   meta_cache[tpl_path] = Object.assign({}, j1, j2);
   return meta_cache[tpl_path]
 }
+var hbscache = {};
 var responseService = function (context) {
   return {
-    // data is not used. (not support server side rendering..)
     render: function (data, tpl, _opts) {
       var _path = (context.path === '/') ? 'index' : context.path;
       var tpl_path = tpl || _path;
@@ -83,6 +86,31 @@ var responseService = function (context) {
         metas: metas,
         title: page_meta.title,
         data
+      });
+    },
+    hbs: function (data, tpl, _opts) {
+      var hbs = HBS.create();
+      require('./hbs_helpers')(hbs, {
+        js: function (p) {
+           var cdnLink = opts.getCDNLink || (() => void 0);
+           return cdnLink(p) || rr(opts.serveFilePath + '/' + p);
+        }
+      }, context, opts);
+      var _path = (context.path === '/') ? 'index' : context.path;
+      var tpl_path = path.join(opts.from, tpl || _path, 'index.hbs');
+      var page_meta = getMetaFromTpl(tpl_path) || {};
+      _opts = Object.assign({}, page_meta, _opts || {});
+      var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
+      var tplfn = hbscache[tpl_path];
+      if (__IS_DEV__ || !content) {
+        var content = fs.readFileSync(tpl_path, 'utf8');
+        tplfn = hbs.compile(content);
+        hbscache[tpl_path] = tplfn;
+      }
+      context.type = 'text/html';
+      context.body = template({
+        title: page_meta.title,
+        body: tplfn(Object.assign({$context: context}, data))
       });
     },
     json: function (data) {
@@ -104,6 +132,14 @@ var responseService = function (context) {
 };
 
 function template(opts) {
+  var body = opts.body || `
+  <body>
+    <div id=${opts.appId}></div>
+    <script> window._STATE = ${JSON.stringify(opts.data || {})}; </script>
+    <script src="${opts.common}"></script>
+    <script src="${opts.src}"></script>
+  </body>
+  `;
   return `<!DOCTYPE html>
 <html>
   <head>
@@ -117,17 +153,11 @@ function template(opts) {
   };
   </script>
   </head>
-  <body>
-    <div id=${opts.appId}></div>
-    <script>
-    window._STATE = ${JSON.stringify(opts.data || {})};
-    </script>
-    <script src="${opts.common}"></script>
-    <script src="${opts.src}"></script>
-  </body>
+  ${body}
 </html>
   `
 }
+
 
 function GLOBAL_HASH() {
   return global.HASH || '';

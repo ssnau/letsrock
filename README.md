@@ -159,6 +159,18 @@ simply add a query "?debug=1" with your url. If you dont like `debug=1` and can 
 
 In such case, you should query `?debug=3`.
 
+## Can I use handlebars as template engine for lightweight pages?
+
+Yes. Simply put a file name "index.hbs" instead of "index.jsx". If a `index.jsx` or `index.jsx` also being presented, it will be
+compiled but will not be auto-included by the page. In this case, you need to manually declare it via `js` helper.
+
+Here is some useful builtin helpers.
+
+```
+{{js "name/path.js"}}
+{{css "name/path.css"}}
+```
+
 License
 ----
 MIT

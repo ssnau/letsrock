@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"no test specified\" && exit 1"
   },
   "bin": {
     "letsrock": "./bin/letsrock"
@@ -27,6 +27,7 @@
     "css-loader": "^0.23.1",
     "empty-loader": "^1.0.1",
     "glob": "^7.0.3",
+    "handlebars": "^4.0.6",
     "json-loader": "^0.5.4",
     "koa-static-namespace": "^2.0.1",
     "memory-fs": "^0.3.0",
@@ -40,6 +41,7 @@
     "uglify-js": "^2.7.5",
     "webpack": "^1.10.5",
     "webpack-dev-middleware": "^1.2.0",
-    "webpack-hot-middleware": "^2.4.1"
+    "webpack-hot-middleware": "^2.4.1",
+    "xkit": "^1.0.5"
   }
 }
