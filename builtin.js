@@ -97,7 +97,7 @@ var responseService = function (context) {
     hbs: function (data, tpl, _opts) {
       var _path = (context.path === '/') ? 'index' : context.path;
       var tpl_path = path.join(opts.from, tpl || _path, 'index.hbs');
-      var page_meta = getMetaFromTpl(tpl_path) || {};
+      var page_meta = getMetaFromTpl(path.join(tpl || _path)) || {};
       _opts = Object.assign({}, page_meta, _opts || {});
       var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
       var tplfn = hbscache[tpl_path];
@@ -109,6 +109,7 @@ var responseService = function (context) {
       context.type = 'text/html';
       context.body = template({
         title: page_meta.title,
+        metas: metas,
         body: tplfn(Object.assign({$context: context}, data))
       });
     },
