@@ -171,6 +171,8 @@ Here is some useful builtin helpers.
 {{css "name/path.css"}}
 ```
 
+Also, you can declare two files `inline.js` and `inline.css` under the same folder, they will be automatically included into the page.
+
 License
 ----
 MIT

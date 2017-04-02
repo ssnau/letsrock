@@ -5,6 +5,7 @@ var empty_str = require('./util').empty_str;
 var fs = require('fs');
 var path = require('path');
 var hbs = require('handlebars');
+var uglify = require('uglify-js');
 
 require('./hbs_helpers')(hbs, {
   js: function (p) {
@@ -71,6 +72,27 @@ function getMetaFromTpl(tpl_path) {
   meta_cache[tpl_path] = Object.assign({}, j1, j2);
   return meta_cache[tpl_path]
 }
+var js_cache = {};
+function getInlineJS(js_path) {
+  if (js_cache[js_path] && !global.__IS_DEV__) return js_cache[js_path];
+  safe(() => js_cache[js_path] = uglify.minify(js_path).code);
+  try {
+   js_cache[js_path] = uglify.minify(js_path).code;
+  } catch (e) {
+    console.log(e);
+  }
+  js_cache[js_path] = js_cache[js_path] || ' ';
+  return js_cache[js_path];
+}
+
+var css_cache = {};
+function getInlineCss(css_path) {
+  if (css_cache[css_path] && !global.__IS_DEV__) return css_cache[css_path];
+  safe(() => css_cache[css_path] = fs.readFileSync(css_path, 'utf-8'));
+  css_cache[css_path] = (css_cache[css_path] || ' ').replace(/\n/g, '');
+  return css_cache[css_path];
+}
+
 var hbscache = {};
 var responseService = function (context) {
   return {
@@ -106,11 +128,14 @@ var responseService = function (context) {
         tplfn = hbs.compile(content);
         hbscache[tpl_path] = tplfn;
       }
+      // deal with inline resource (inline.js / inline.css)
+      var inlineJS = getInlineJS(path.join(opts.from, tpl || _path, 'inline.js'));
+      var inlineCSS = getInlineCss(path.join(opts.from, tpl || _path, 'inline.css'));
       context.type = 'text/html';
       context.body = template({
         title: page_meta.title,
         metas: metas,
-        body: tplfn(Object.assign({$context: context}, data))
+        body: `<style>${inlineCSS}</style>` + tplfn(Object.assign({$context: context}, data)) + `<script>${inlineJS}</script>`
       });
     },
     json: function (data) {
