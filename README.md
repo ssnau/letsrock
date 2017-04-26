@@ -161,7 +161,7 @@ In such case, you should query `?debug=3`.
 
 ## Can I use handlebars as template engine for lightweight pages?
 
-Yes. Simply put a file name "index.hbs" instead of "index.jsx". If a `index.jsx` or `index.jsx` also being presented, it will be
+Yes. Simply put a file name "index.hbs" instead of "index.jsx". If an `index.jsx` or `index.jsx` being presented, it will be
 compiled but will not be auto-included by the page. In this case, you need to manually declare it via `js` helper.
 
 Here is some useful builtin helpers.
@@ -172,6 +172,8 @@ Here is some useful builtin helpers.
 ```
 
 Also, you can declare two files `inline.js` and `inline.css` under the same folder, they will be automatically included into the page.
+
+warning: the `inline.js` will not be compiled, be carefully!!
 
 License
 ----
