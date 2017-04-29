@@ -37,7 +37,7 @@ service
 controller
 ```
 
-if you wanna run some code at startup, please add a file named `_startup.js` under your project root folder.
+if you wanna run some code at startup, please add a file named `_startup.js` under your project root folder. If `_startup.js` exports a promise, the bootstrap will wait for the promise resolved.
 
 Builtin Injectors
 -----
@@ -174,6 +174,20 @@ Here is some useful builtin helpers.
 Also, you can declare two files `inline.js` and `inline.css` under the same folder, they will be automatically included into the page.
 
 warning: the `inline.js` will not be compiled, be carefully!!
+
+## Can I add something to the built-in webpack config?
+
+Sure thing. Edit your `.rcrc` file like following:
+
+```
+{
+  processWebpackConfig: function (webpackConfig) {
+    webpackConfig.plugins = ....
+    return webpackConfig;  // do not forget this line
+  }
+}
+
+```
 
 License
 ----

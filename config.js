@@ -3,6 +3,7 @@ var getbabelRelayPlugin = require('babel-relay-plugin');
 var cwd = global.getCWD();
 var rc = require("./getRC")(cwd);
 
+const valueFn = x => x;
 module.exports = {
   from: path.join(cwd, rc.src || 'src'),
   to: path.join(cwd, rc.dist || 'dist'),
@@ -20,5 +21,7 @@ module.exports = {
 
   metas: rc.metas,
 
-  debug_flag: rc.debug_flag || 1
+  debug_flag: rc.debug_flag || 1,
+
+  processWebpackConfig: rc.processWebpackConfig || valueFn,
 };

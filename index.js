@@ -31,39 +31,43 @@ global.__IS_DEV__ = (target == 'dev');
 global.APP_BASE = getCWD();
 
 if (target == 'dev' || target == 'start') {
-  console.log('lib path is ' + __dirname);
-  var app = require('rekoa')({
-    isDevelopment: target == 'dev',
-    base: cwd,
-    path: {
-      middleware: middlewarePath,
-      service: servicePath,
-      controller: controllerPath 
-    },
-    port: opts.port
-  });
-  app.addMiddleware(function *(next) {
-    yield next;
-    if (!opts.autoMount) return;
-    var response = yield this.$injector.get('response');
-    response.render();
-  });
-  require('./builtin')(app);
-  app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res", maxage: MAX_AGE}));  // static resource folder
-  if (target == 'start' && !opts.getCDNLink) {
-    // build file first
-    console.info('building static files to ', opts.to);
-    opts.babelQuery.plugins = [];
-    getCompiler().run(function(err, stats) {
-      if (!err) return console.log('success');
-      return console.error(err);
+  let m;
+  if (fs.existsSync(path.join(cwd, '_startup.js'))) m = require(path.join(cwd, '_startup.js'));
+  let p = (m && m.then) ? m : Promise.resolve();
+  p.then(function() {
+    console.log('lib path is ' + __dirname);
+    var app = require('rekoa')({
+      isDevelopment: target == 'dev',
+      base: cwd,
+      path: {
+        middleware: middlewarePath,
+        service: servicePath,
+        controller: controllerPath 
+      },
+      port: opts.port
     });
-    // use koa-static-namespace
-    app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
-  }
-  if (target == 'dev') require('./devserver')(opts)(app);
-  if (fs.existsSync(path.join(cwd, '_startup.js'))) require(path.join(cwd, '_startup.js'));
-  app.start();
+    app.addMiddleware(function *(next) {
+      yield next;
+      if (!opts.autoMount) return;
+      var response = yield this.$injector.get('response');
+      response.render();
+    });
+    require('./builtin')(app);
+    app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res", maxage: MAX_AGE}));  // static resource folder
+    if (target == 'start' && !opts.getCDNLink) {
+      // build file first
+      console.info('building static files to ', opts.to);
+      opts.babelQuery.plugins = [];
+      getCompiler().run(function(err, stats) {
+        if (!err) return console.log('success');
+        return console.error(err);
+      });
+      // use koa-static-namespace
+      app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
+    }
+    if (target == 'dev') require('./devserver')(opts)(app);
+    app.start();
+  });
 }
 
 function getCompiler() {

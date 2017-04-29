@@ -40,7 +40,7 @@ function getWebpackEntries(opts, ext) {
 
   var isOnline = (ext || {}).isOnline;
   var entries = getEntries(templatePath);
-  return {
+  return opts.processWebpackConfig({
     entry: entries,
     module: {
       // Disable handling of unknown requires
@@ -118,7 +118,7 @@ function getWebpackEntries(opts, ext) {
         config: "var {} " // 对于client端，config是空白
       }
     ]
-  }
+  });
 }
 
 module.exports = getWebpackEntries;

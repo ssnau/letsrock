@@ -73,15 +73,20 @@ function getMetaFromTpl(tpl_path) {
   return meta_cache[tpl_path]
 }
 var js_cache = {};
+
+function getMinifyJSfromPath(p) {
+  let content = safe(() => fs.readFileSync(p, 'utf8'));
+  if (!content) return '';
+  try {
+    return uglify.minify(content).code;
+  } catch (e) {
+    console.log('minify error on file: ' + p, e);
+    return '';
+  }
+}
 function getInlineJS(js_path) {
   if (js_cache[js_path] && !global.__IS_DEV__) return js_cache[js_path];
-  safe(() => js_cache[js_path] = uglify.minify(js_path).code);
-  try {
-   js_cache[js_path] = uglify.minify(js_path).code;
-  } catch (e) {
-    console.log(e);
-  }
-  js_cache[js_path] = js_cache[js_path] || ' ';
+  js_cache[js_path] = getMinifyJSfromPath(js_path) || ' '; // make sure not empty
   return js_cache[js_path];
 }
 
