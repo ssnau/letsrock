@@ -30,6 +30,11 @@ var MAX_AGE = 3153600000;
 global.__IS_DEV__ = (target == 'dev');
 global.APP_BASE = getCWD();
 
+if (target == 'debug') {
+  console.log('node debug ' + __dirname + ' dev');
+  return;
+}
+
 if (target == 'dev' || target == 'start') {
   let m;
   if (fs.existsSync(path.join(cwd, '_startup.js'))) m = require(path.join(cwd, '_startup.js'));
