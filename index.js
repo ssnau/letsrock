@@ -71,6 +71,7 @@ if (target == 'dev' || target == 'start') {
       app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
     }
     if (target == 'dev') require('./devserver')(opts)(app);
+    app.koa.keys = opts.keys || ['default key'];
     app.start();
   });
 }
