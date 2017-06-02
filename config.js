@@ -24,4 +24,6 @@ module.exports = {
   debug_flag: rc.debug_flag || 1,
 
   processWebpackConfig: rc.processWebpackConfig || valueFn,
+
+  serviceLowerCasify: rc.serviceLowerCasify,
 };

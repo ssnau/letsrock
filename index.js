@@ -49,6 +49,7 @@ if (target == 'dev' || target == 'start') {
         service: servicePath,
         controller: controllerPath 
       },
+      serviceLowerCasify: opts.serviceLowerCasify,
       port: opts.port
     });
     app.addMiddleware(function *(next) {
