@@ -189,6 +189,10 @@ Sure thing. Edit your `.rcrc` file like following:
 
 ```
 
+# How to write unit test cases?
+
+In any folder, create files that contains `spec.js`. These files will be automatically loaded when run `letsrock test`. Please follow the mocha pattern to write test cases;
+
 License
 ----
 MIT

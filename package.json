@@ -31,6 +31,7 @@
     "json-loader": "^0.5.4",
     "koa-static-namespace": "^2.0.1",
     "memory-fs": "^0.3.0",
+    "mocha": "^3.4.2",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-transform-catch-errors": "^1.0.2",
@@ -42,6 +43,6 @@
     "webpack": "^1.10.5",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1",
-    "xkit": "^1.0.5"
+    "xkit": "^1.1.1"
   }
 }

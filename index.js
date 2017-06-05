@@ -4,6 +4,7 @@ var argv = require( 'argv' );
 var watch = require('xkit/fs/watch');
 var spawn = require('xkit/process/spawn');
 var execSync = require('child_process').execSync;
+var readdir = require('xkit/fs/readdir');
 
 function getCWD() {
   return process.env.ROCK_DIR || process.cwd();
@@ -121,6 +122,34 @@ if (target == 'init') {
 
 if (target == 'where') {
   console.log(__dirname);
+}
+
+if (target == 'test') {
+  //const mochaBin = path.join(__dirname, 'node_modules/.bin/mocha');
+  const appDir = global.APP_BASE;
+  const files = readdir(appDir, {
+    pattern: (absfile) => {
+      // filter folders
+      if (absfile.indexOf('node_modules') > -1) return false;
+      if (absfile.indexOf('/.git/') > -1) return false;
+      return true;
+    }
+  }).filter(s => s.indexOf('spec.js') > 0);
+  const Mocha = require('mocha');
+  var mocha = new Mocha();
+	console.log('files' + files);
+  files.forEach(f => {
+console.log('add file' + f);
+mocha.addFile(f)
+});
+console.log('run mocha');
+	mocha.run(function(failures){
+console.log('did run');
+		process.on('exit', function () {
+			process.exit(failures);  // exit with non-zero status if there were failures
+		});
+	});
+
 }
 
 var cpjs = () => execSync(`cp ${path.join(cwd, '*.js')} ${__dirname}`).toString();
