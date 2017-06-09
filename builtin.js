@@ -128,7 +128,7 @@ var responseService = function (context) {
       _opts = Object.assign({}, page_meta, _opts || {});
       var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
       var tplfn = hbscache[tpl_path];
-      if (__IS_DEV__ || !content) {
+      if (__IS_DEV__ || !tplfn) {
         var content = fs.readFileSync(tpl_path, 'utf8');
         tplfn = hbs.compile(content);
         hbscache[tpl_path] = tplfn;
