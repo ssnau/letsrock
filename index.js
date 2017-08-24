@@ -85,6 +85,7 @@ function getCompiler() {
 }
 
 if (target == 'build' || target == 'watch') {
+  const compiler = getCompiler();
   compiler.plugin("done", stats => {
     var startTime = stats.startTime;
     var endTime = stats.endTime;
