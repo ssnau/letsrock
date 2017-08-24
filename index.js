@@ -14,6 +14,11 @@ global.getCWD = getCWD;
 
 var opts = require('./config');
 var cwd = getCWD();
+var HASH_PATH = path.join(cwd, 'HASH');
+try {
+  global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
+} catch (e) {
+}
 
 require("babel-register")(require('./babelQuery'));
 var kstatic = require('koa-static-namespace');
@@ -69,9 +74,9 @@ if (target == 'dev' || target == 'start') {
         if (!err) return console.log('success');
         return console.error(err);
       });
-      // use koa-static-namespace
-      app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
     }
+    // use koa-static-namespace
+    app.use(kstatic(opts.to, {namespace: opts.serveFilePath, maxage: MAX_AGE}));
     if (target == 'dev') require('./devserver')(opts)(app);
     app.koa.keys = opts.keys || ['default key'];
     app.start();
@@ -94,7 +99,10 @@ if (target == 'build' || target == 'watch') {
   if (target == 'build') {
     opts.babelQuery.plugins = [];
     return compiler.run(function(err, stats) {
-      if (!err) return console.log('success');
+      if (!err) {
+        fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
+        return console.log('success');
+      }
       return console.error(err);
     })
   }
