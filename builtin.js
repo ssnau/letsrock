@@ -7,6 +7,11 @@ var path = require('path');
 var hbs = require('handlebars');
 var uglify = require('uglify-js');
 
+var hashify = str => {
+  const hash = GLOBAL_HASH() + (__IS_DEV__ ? '' : '.min');
+  return str.replace(/.js$/, `.${hash}.js`);
+}
+
 require('./hbs_helpers')(hbs, {
   js: function (p) {
      var serveFilePath = (!__IS_DEV__ && otps.cdnPrefix) || opts.serveFilePath;
@@ -107,8 +112,6 @@ var responseService = function (context) {
       var page_meta = getMetaFromTpl(tpl_path) || {};
       _opts = Object.assign({}, page_meta, _opts || {});
       var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
-      var hash = GLOBAL_HASH();
-      var hashify = str => str.replace(/.js$/, `.${hash}.js`);
       var serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
 
       context.type = 'text/html';
