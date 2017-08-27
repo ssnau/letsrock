@@ -66,7 +66,7 @@ if (target == 'dev' || target == 'start') {
     });
     require('./builtin')(app);
     app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res", maxage: MAX_AGE}));  // static resource folder
-    if (target == 'start' && !opts.getCDNLink) {
+    if (target == 'start' && !opts.cdnPrefix) {
       // build file first
       console.info('building static files to ', opts.to);
       opts.babelQuery.plugins = [];

@@ -9,8 +9,8 @@ var uglify = require('uglify-js');
 
 require('./hbs_helpers')(hbs, {
   js: function (p) {
-     var cdnLink = opts.getCDNLink || (() => void 0);
-     return cdnLink(p) || rr(opts.serveFilePath + '/' + p);
+     var serveFilePath = (!__IS_DEV__ && otps.cdnPrefix) || opts.serveFilePath;
+     return hashify(rr(serveFilePath + '/' + p));
   }
 }, opts);
 
@@ -107,14 +107,14 @@ var responseService = function (context) {
       var page_meta = getMetaFromTpl(tpl_path) || {};
       _opts = Object.assign({}, page_meta, _opts || {});
       var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
-      var cdnLink = opts.getCDNLink || (() => void 0);
-      var hash = global.HASH + ((!__IS_DEV__ && context.query.debug != opts.debug_flag) ? '.min' : '');
+      var hash = GLOBAL_HASH();
       var hashify = str => str.replace(/.js$/, `.${hash}.js`);
+      var serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
 
       context.type = 'text/html';
       context.body = template({
-        src: hashify(cdnLink(tpl_path) || rr(opts.serveFilePath + '/' + (tpl_path) + '/index.js')),
-        common: hashify(cdnLink('_commons.js') || rr(opts.serveFilePath + '/_commons.js')),
+        src: hashify(rr(serveFilePath + '/' + (tpl_path) + '/index.js')),
+        common: hashify(rr(serveFilePath + '/_commons.js')),
         appId: page_meta.appId || 'app',
         metas: metas,
         title: page_meta.title,
@@ -194,10 +194,15 @@ function GLOBAL_HASH() {
 }
 
 function rr(src) {
+  var R = "U^&*)%%VNMCL:$__YYY";
+  var RS = "NHGI%#$%^&*(@____(BGW";
   return src
+    .replace('http://',R)
+    .replace('https://',RS)
     .replace('//', '/')
     .replace('//', '/')
-    .replace('//', '/');
+    .replace(R, '//')
+    .replace(RS, '//')
 }
 
 module.exports = setup;

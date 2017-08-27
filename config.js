@@ -17,7 +17,7 @@ module.exports = {
 
   serveFilePath: '/__files' || rc.serveFilePath,
 
-  getCDNLink: rc.getCDNLink,   // user-provided fn to determine where the static file is
+  cdnPrefix: rc.cdnPrefix,   // user-provided fn to determine where the static file is
 
   metas: rc.metas,
 
