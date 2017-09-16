@@ -20,7 +20,7 @@ try {
 } catch (e) {
 }
 
-require("babel-register")(require('./babelQuery'));
+//require("babel-register")(require('./babelQuery'));
 var kstatic = require('koa-static-namespace');
 
 var args = argv.option([]).run();
@@ -35,6 +35,7 @@ var MAX_AGE = 3153600000;
 /** setup global variable **/
 global.__IS_DEV__ = (target == 'dev');
 global.APP_BASE = getCWD();
+global.ROCK_CONFIG = opts;
 
 if (target == 'debug') {
   console.log('node debug ' + __dirname + ' dev');
@@ -47,7 +48,7 @@ if (target == 'dev' || target == 'start') {
   let p = (m && m.then) ? m : Promise.resolve();
   p.then(function() {
     console.log('lib path is ' + __dirname);
-    var app = require('rekoa')({
+    const app = require('rekoa')({
       isDevelopment: target == 'dev',
       base: cwd,
       path: {
@@ -58,14 +59,12 @@ if (target == 'dev' || target == 'start') {
       serviceLowerCasify: opts.serviceLowerCasify,
       port: opts.port
     });
-    app.addMiddleware(function *(next) {
-      yield next;
-      if (!opts.autoMount) return;
-      var response = yield this.$injector.get('response');
-      response.render();
-    });
     require('./builtin')(app);
     app.use(kstatic(path.join(cwd, "_res"), {namespace: "_res", maxage: MAX_AGE}));  // static resource folder
+    // extra static folder
+    Object.keys(opts.static || {}).forEach(key => {
+      app.use(kstatic(path.join(cwd, key), {namespace: opts.static[key], maxage: MAX_AGE}));  // static resource folder
+    });
     if (target == 'start' && !opts.cdnPrefix) {
       // build file first
       console.info('building static files to ', opts.to);
@@ -124,8 +123,9 @@ if (target == 'init') {
   controllerPath = path.join(base, 'controller');
   middlewarePath = path.join(base, 'middleware');
   servicePath = path.join(base, 'service');
-  execSync(`cd ${base} && npm init -f && npm i react react-dom --save`);
+  execSync(`cd ${base} && npm init -f && npm i react react-dom co handlebars co-body --save`);
   execSync(`mkdir ${controllerPath} && mkdir ${middlewarePath} && mkdir ${servicePath}`);
+  execSync(`cp ${path.join(__dirname, 'builtin-services') + '/* ' + servicePath }`);
   console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
 }
 

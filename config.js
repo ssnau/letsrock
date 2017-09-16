@@ -26,4 +26,6 @@ module.exports = {
   processWebpackConfig: rc.processWebpackConfig || valueFn,
 
   serviceLowerCasify: rc.serviceLowerCasify,
+
+  static: rc.static,
 };
