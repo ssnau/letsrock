@@ -2,7 +2,6 @@ var path = require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
 var cwd = global.getCWD();
 var rc = require("./getRC")(cwd);
-
 const valueFn = x => x;
 module.exports = {
   from: path.join(cwd, rc.src || 'src'),

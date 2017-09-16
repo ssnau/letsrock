@@ -14,6 +14,7 @@ if (rc.relay) {
 }
 var valfn = x => x;
 var postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
+const isdev = global.__IS_DEV__
 
 module.exports = postProcessBabelQuery({
   passPerPreset: true,
@@ -23,7 +24,7 @@ module.exports = postProcessBabelQuery({
     r("babel-preset-turbo"),
   ].filter(Boolean),
   plugins: [
-    [r('babel-plugin-react-transform'), {
+    isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
         transform: r('react-transform-hmr'),
         imports: ['react'],
@@ -32,6 +33,6 @@ module.exports = postProcessBabelQuery({
         transform: r('react-transform-catch-errors'),
         imports: ['react', r('redbox-react')]
       }]
-    }].filter(Boolean)
-  ]
+    }].filter(Boolean) : null,
+  ].filter(Boolean)
 });

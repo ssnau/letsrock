@@ -1,3 +1,8 @@
+/** setup global variable **/
+global.__IS_DEV__ = (target == 'dev');
+global.APP_BASE = getCWD();
+global.ROCK_CONFIG = opts;
+
 var path = require('path');
 var fs   = require('fs');
 var argv = require( 'argv' );
@@ -20,7 +25,11 @@ try {
 } catch (e) {
 }
 
-//require("babel-register")(require('./babelQuery'));
+const r = name => require.resolve(name);
+require("babel-register")({
+  "presets": [ r("babel-preset-react") ],
+  "plugins": [ r('babel-plugin-transform-es2015-modules-commonjs')],
+});
 var kstatic = require('koa-static-namespace');
 
 var args = argv.option([]).run();
@@ -32,10 +41,6 @@ var middlewarePath = path.join(cwd, 'middleware');
 var servicePath = path.join(cwd, 'service');
 var MAX_AGE = 3153600000;
 
-/** setup global variable **/
-global.__IS_DEV__ = (target == 'dev');
-global.APP_BASE = getCWD();
-global.ROCK_CONFIG = opts;
 
 if (target == 'debug') {
   console.log('node debug ' + __dirname + ' dev');
@@ -83,7 +88,7 @@ if (target == 'dev' || target == 'start') {
 }
 
 function getCompiler() {
-  var webpackConfig = require('./getWebpackConfig')(opts, {isOnline: true});
+  var webpackConfig = require('./getWebpackConfig')(opts, { isOnline: true });
   var compiler = require('webpack')(webpackConfig)
   return compiler;
 }
