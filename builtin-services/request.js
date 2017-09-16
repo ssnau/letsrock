@@ -1,4 +1,5 @@
 const parse = require('co-body');
+const co = require('co');
 module.exports = function (context) {
   var parsed, body;
   return {

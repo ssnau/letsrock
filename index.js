@@ -1,8 +1,6 @@
 /** setup global variable **/
 global.__IS_DEV__ = (target == 'dev');
 global.APP_BASE = getCWD();
-global.ROCK_CONFIG = opts;
-
 var path = require('path');
 var fs   = require('fs');
 var argv = require( 'argv' );
@@ -20,6 +18,8 @@ global.getCWD = getCWD;
 var opts = require('./config');
 var cwd = getCWD();
 var HASH_PATH = path.join(cwd, 'HASH');
+global.ROCK_CONFIG = opts;
+
 try {
   global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
 } catch (e) {
@@ -28,7 +28,10 @@ try {
 const r = name => require.resolve(name);
 require("babel-register")({
   "presets": [ r("babel-preset-react") ],
-  "plugins": [ r('babel-plugin-transform-es2015-modules-commonjs')],
+  "plugins": [ 
+    r('babel-plugin-transform-es2015-modules-commonjs'),
+    r("babel-plugin-transform-decorators-legacy")
+  ],
 });
 var kstatic = require('koa-static-namespace');
 
