@@ -4,13 +4,16 @@ var r = name => require.resolve(name);
 var rc = require("./getRC")(global.getCWD());
 
 // if relay enabled
-var relayPreset;
+var relayPreset, flowPreset;
 if (rc.relay) {
   relayPreset = {
     "plugins": [
       r('./relayBabelPreset')
     ]
   };
+}
+if (rc.flow) {
+  flowPreset = r('babel-preset-flow')
 }
 var valfn = x => x;
 var postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
@@ -20,6 +23,7 @@ module.exports = postProcessBabelQuery({
   passPerPreset: true,
   presets: [
     relayPreset,
+    flowPreset,
     r("babel-preset-react"),
     r("babel-preset-turbo"),
   ].filter(Boolean),

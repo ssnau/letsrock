@@ -17,6 +17,7 @@
     "babel-core": "^6.8.0",
     "babel-loader": "^6.x",
     "babel-plugin-react-transform": "^2.0.2",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
     "babel-preset-turbo": "^0.0.5",
