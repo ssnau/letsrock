@@ -1,6 +1,4 @@
 /** setup global variable **/
-global.__IS_DEV__ = (target == 'dev');
-global.APP_BASE = getCWD();
 var path = require('path');
 var fs   = require('fs');
 var argv = require( 'argv' );
@@ -8,6 +6,12 @@ var watch = require('xkit/fs/watch');
 var spawn = require('xkit/process/spawn');
 var execSync = require('child_process').execSync;
 var readdir = require('xkit/fs/readdir');
+
+var args = argv.option([]).run();
+var target = args.targets[0];
+var target2 = args.targets[1];
+global.__IS_DEV__ = (target == 'dev');
+global.APP_BASE = getCWD();
 
 function getCWD() {
   return process.env.ROCK_DIR || process.cwd();
@@ -34,10 +38,6 @@ require("babel-register")({
   ],
 });
 var kstatic = require('koa-static-namespace');
-
-var args = argv.option([]).run();
-var target = args.targets[0];
-var target2 = args.targets[1];
 
 var controllerPath = path.join(cwd, 'controller');
 var middlewarePath = path.join(cwd, 'middleware');
