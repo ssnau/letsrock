@@ -25,7 +25,7 @@ module.exports = postProcessBabelQuery({
     relayPreset,
     flowPreset,
     r("babel-preset-react"),
-    r("babel-preset-turbo"),
+    r("babel-preset-turbo"),  // transform into es5
   ].filter(Boolean),
   plugins: [
     isdev ? [r('babel-plugin-react-transform'), {

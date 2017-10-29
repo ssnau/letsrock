@@ -8,3 +8,5 @@ module.exports = {
   },
   empty_str: v => (v || '')
 };
+
+export type inner_util = {};

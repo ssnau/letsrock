@@ -9,13 +9,13 @@ const uglify = require('uglify-js');
 
 require('./_hbs_helpers')(hbs, {
   js: function (p) {
-    var serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
+    var serveFilePath = (!global.__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
     return hashify(rr(serveFilePath + '/' + p));
   },
 }, opts);
 
 const hashify = str => {
-  const hash = GLOBAL_HASH() + (__IS_DEV__ ? '' : '.min');
+  const hash = GLOBAL_HASH() + (global.__IS_DEV__ ? '' : '.min');
   return str.replace(/.js$/, `.${hash}.js`);
 }
 
@@ -34,63 +34,6 @@ function rr(src) {
 }
 
 const hbscache = {};
-module.exports = function (context) {
-  return {
-    render: function (data, tpl) {
-      const _path = (context.path === '/') ? 'index' : context.path;
-      const tpl_path = tpl || _path;
-      const page_meta = getMetaFromTpl(tpl_path) || {};
-      const metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
-      const serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
-
-      context.type = 'text/html';
-      context.body = template({
-        src: hashify(rr(serveFilePath + '/' + (tpl_path) + '/index.js')),
-        common: hashify(rr(serveFilePath + '/_commons.js')),
-        appId: page_meta.appId || 'app',
-        metas: metas,
-        title: page_meta.title,
-        data
-      });
-    },
-    hbs: function (data, tpl) {
-      var _path = (context.path === '/') ? 'index' : context.path;
-      var tpl_path = path.join(opts.from, tpl || _path, 'index.hbs');
-      var page_meta = getMetaFromTpl(path.join(tpl || _path)) || {};
-      var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
-      var tplfn = hbscache[tpl_path];
-      if (__IS_DEV__ || !tplfn) {
-        var content = fs.readFileSync(tpl_path, 'utf8');
-        tplfn = hbs.compile(content);
-        hbscache[tpl_path] = tplfn;
-      }
-      // deal with inline resource (inline.js / inline.css)
-      var inlineJS = getInlineJS(path.join(opts.from, tpl || _path, 'inline.js'));
-      var inlineCSS = getInlineCss(path.join(opts.from, tpl || _path, 'inline.css'));
-      context.type = 'text/html';
-      context.body = template({
-        title: page_meta.title,
-        metas: metas,
-        body: `<style>${inlineCSS}</style>` + tplfn(Object.assign({$context: context}, data)) + `<script>${inlineJS}</script>`
-      });
-    },
-    json: function (data) {
-      context.body = data;
-    },
-    ok: function (data) {
-      context.body = {
-        status: 0,
-        data
-      }
-    },
-    fail: function (obj) {
-      context.body = Object.assign({
-        status: 1,
-        msg: 'unknown error'
-      }, obj || {});
-    }
-  };
-};
 
 const meta_cache = {};
 function getMetaFromTpl(tpl_path) {
@@ -165,3 +108,73 @@ function template(opts) {
 function GLOBAL_HASH() {
   return global.HASH || '';
 }
+
+class Response {
+  context: Context;
+
+  constructor(context) {
+    this.context = context;
+  }
+
+  render(data, tpl) {
+    const { context } = this;
+    const _path = (context.path === '/') ? 'index' : context.path;
+    const tpl_path = tpl || _path;
+    const page_meta = getMetaFromTpl(tpl_path) || {};
+    const metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
+    const serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
+
+    context.type = 'text/html';
+    context.body = template({
+      src: hashify(rr(serveFilePath + '/' + (tpl_path) + '/index.js')),
+      common: hashify(rr(serveFilePath + '/_commons.js')),
+      appId: page_meta.appId || 'app',
+      metas: metas,
+      title: page_meta.title,
+      data: data || {},
+    });
+  }
+
+  hbs(data, tpl) {
+    const { context } = this;
+    var _path = (context.path === '/') ? 'index' : context.path;
+    var tpl_path = path.join(opts.from, tpl || _path, 'index.hbs');
+    var page_meta = getMetaFromTpl(path.join(tpl || _path)) || {};
+    var metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
+    var tplfn = hbscache[tpl_path];
+    if (__IS_DEV__ || !tplfn) {
+      var content = fs.readFileSync(tpl_path, 'utf8');
+      tplfn = hbs.compile(content);
+      hbscache[tpl_path] = tplfn;
+    }
+    // deal with inline resource (inline.js / inline.css)
+    var inlineJS = getInlineJS(path.join(opts.from, tpl || _path, 'inline.js'));
+    var inlineCSS = getInlineCss(path.join(opts.from, tpl || _path, 'inline.css'));
+    context.type = 'text/html';
+    context.body = template({
+      title: page_meta.title,
+      metas: metas,
+      body: `<style>${inlineCSS}</style>` + tplfn(Object.assign({$context: context}, data)) + `<script>${inlineJS}</script>`
+    });
+  }
+
+  json (data) {
+    context.body = data;
+  }
+
+  ok (data) {
+    context.body = {
+      status: 0,
+      data
+    }
+  }
+
+  fail (obj) {
+    context.body = Object.assign({
+      status: 1,
+      msg: 'unknown error'
+    }, obj || {});
+  }
+}
+
+export default Response;

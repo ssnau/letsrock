@@ -31,6 +31,7 @@ try {
 
 const r = name => require.resolve(name);
 require("babel-register")({
+  // preset-react 已经包含了preset-flow
   "presets": [ r("babel-preset-react") ],
   "plugins": [ 
     r('babel-plugin-transform-es2015-modules-commonjs'),
@@ -125,15 +126,20 @@ if (target == 'init') {
   var base = path.join(cwd, target2);
   console.log('create project directory');
   execSync('mkdir -p ' + path.join(base, 'src/index'));
+  execSync('mkdir -p ' + path.join(base, 'types'));
   fs.createReadStream(path.join(__dirname, 'template/src/index/index.jsx')).pipe(fs.createWriteStream(path.join(base, 'src/index/index.jsx')));
+  fs.createReadStream(path.join(__dirname, 'template/types/builtin.js')).pipe(fs.createWriteStream(path.join(base, 'types/builtin.js')));
   fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
+  fs.createReadStream(path.join(__dirname, 'template/_d_flowconfig')).pipe(fs.createWriteStream(path.join(base, '.flowconfig')));
   console.log('setup project');
   controllerPath = path.join(base, 'controller');
   middlewarePath = path.join(base, 'middleware');
   servicePath = path.join(base, 'service');
-  execSync(`cd ${base} && npm init -f && npm i react react-dom co handlebars co-body --save`);
+  execSync(`cd ${base} && npm init -f && npm i react react-dom co handlebars co-body --save && npm i --dev flow-bin`);
   execSync(`mkdir ${controllerPath} && mkdir ${middlewarePath} && mkdir ${servicePath}`);
-  execSync(`cp ${path.join(__dirname, 'builtin-services') + '/* ' + servicePath }`);
+  execSync(`cp ${path.join(__dirname, 'template/controller') + '/* ' + controllerPath }`);
+  execSync(`cp ${path.join(__dirname, 'template/middleware') + '/* ' + middlewarePath }`);
+  execSync(`cp ${path.join(__dirname, 'template/service') + '/* ' + servicePath }`);
   console.log('done. please `cd '+ target2 + '` and run `letsrcok dev`');
 }
 

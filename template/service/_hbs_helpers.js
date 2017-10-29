@@ -19,3 +19,5 @@ module.exports = function (hbs, util, opts) {
     );
   });
 }
+
+export type inner_hbs_helper = {};
