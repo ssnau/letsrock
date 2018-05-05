@@ -28,6 +28,7 @@ module.exports = postProcessBabelQuery({
     r("babel-preset-turbo"),  // transform into es5
   ].filter(Boolean),
   plugins: [
+    [r('./babel-plugin-letsrock-ssr')],
     isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
         transform: r('react-transform-hmr'),
