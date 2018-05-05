@@ -6,6 +6,9 @@ const path = require('path');
 const opts = global.ROCK_CONFIG;
 const hbs = require('handlebars');
 const uglify = require('uglify-js');
+const { renderToString } = require('react-dom/server');
+const React = require('react');
+
 
 require('./_hbs_helpers')(hbs, {
   js: function (p) {
@@ -79,21 +82,38 @@ function getInlineCss(css_path) {
   return css_cache[css_path];
 }
 
-function template(opts) {
-  var body = opts.body || `
+function template({
+    reactClass,
+    ssr,
+    hydrate,
+    src,
+    common,
+    appId,
+    metas,
+    title,
+    data,
+    body
+}) {
+  const ssrString = (reactClass && ssr) ? renderToString(React.createElement(reactClass, data)) : '';
+    debugger;
+  const finalBody = body || `
   <body>
-    <div id=${opts.appId}></div>
-    <script> window._STATE = ${JSON.stringify(opts.data || {})}; </script>
-    <script src="${opts.common}"></script>
-    <script src="${opts.src}"></script>
+    <div id="${appId}">${ssrString}</div>
+    <script> window._STATE = ${JSON.stringify(data || {})}; </script>
+        ${common ? `<script src="${common}"></script>` : ''}
+    ${src ? `<script src="${src}"></script>` : ''}
+      ${reactClass ? `<script>
+          var clazz = window._rockClasses['${reactClass.rockName}'];
+          window.ReactDOM.hydrate(React.createElement(clazz, window._STATE), document.getElementById('${appId}'));
+          </script>` : ''}
   </body>
   `;
   return `<!DOCTYPE html>
 <html>
   <head>
-  <title>${opts.title || ""}</title>
+  <title>${title || ""}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
-  ${opts.metas || ''}
+  ${metas || ''}
   <script>
   window.$res = function (path) {
     var p =  (path.indexOf('/') == 0) ? path.slice(1) : path;
@@ -101,7 +121,8 @@ function template(opts) {
   };
   </script>
   </head>
-  ${body}
+  ${finalBody}
+  </script>
 </html>`
 }
 
@@ -109,6 +130,18 @@ function GLOBAL_HASH() {
   return global.HASH || '';
 }
 
+const jsxCache = {};
+function requireJSX(tpl_path) {
+  const jsFile = path.join(opts.from, tpl_path, 'index.js');
+  const jsxFile = path.join(opts.from, tpl_path, 'index.jsx');
+  if (global.__IS_DEV__) {
+     safe(() => delete require.cache[require.resolve(jsFile)]);
+     safe(() => delete require.cache[require.resolve(jsxFile)]);
+  }
+  const clazz =  safe(() => require(jsxFile)) || safe(() => require(jsFile));
+  if (typeof clazz === 'function') return clazz;
+  return clazz['default'];
+}
 class Response {
   context: Context;
 
@@ -121,11 +154,17 @@ class Response {
     const _path = (context.path === '/') ? 'index' : context.path;
     const tpl_path = tpl || _path;
     const page_meta = getMetaFromTpl(tpl_path) || {};
+    const ssr = page_meta.ssr || false;
+    const hydrate = !page_meta.skipHydrate;
     const metas = empty_str(page_meta.merge_global_metas ? opts.metas : '') + empty_str(page_meta.metas);
     const serveFilePath = (!__IS_DEV__ && opts.cdnPrefix) || opts.serveFilePath;
+    const reactClass = requireJSX(tpl_path);
 
     context.type = 'text/html';
     context.body = template({
+      reactClass,
+      ssr,
+      hydrate,
       src: hashify(rr(serveFilePath + '/' + (tpl_path) + '/index.js')),
       common: hashify(rr(serveFilePath + '/_commons.js')),
       appId: page_meta.appId || 'app',

@@ -21,7 +21,6 @@ You can add a `.rcrc` file to indicate you config.
 ```javascript
 {
   "autoMount": true, // true to auto mount page for specific urls, it will bypass your custom controller
-  "serverRender": false, // enable server render or not
   "port": 9988  // port to listen
 }
 ```
@@ -177,7 +176,7 @@ warning: the `inline.js` will not be compiled, be carefully!!
 
 ## Can I add something to the built-in webpack config?
 
-Sure thing. Edit your `.rcrc` file like following:
+Not recommended. However, you can still make it. Edit your `.rcrc` file like following:
 
 ```
 {
@@ -189,9 +188,22 @@ Sure thing. Edit your `.rcrc` file like following:
 
 ```
 
+# How to enable ssr?
+
+ssr is by default disabled. You should enable it page by page. In your `metas.js`, add:
+
+```
+{
+  ssr: true,
+  skipHydrate: false, // if you don't want client to hydrate, mark it ture.
+}
+
+```
+
 # How to write unit test cases?
 
 In any folder, create files that contains `spec.js`. These files will be automatically loaded when run `letsrock test`. Please follow the mocha pattern to write test cases;
+
 
 License
 ----

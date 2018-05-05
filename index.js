@@ -33,7 +33,8 @@ const r = name => require.resolve(name);
 require("babel-register")({
   // preset-react 已经包含了preset-flow
   "presets": [ r("babel-preset-react") ],
-  "plugins": [ 
+  "plugins": [
+    r('./babel-plugin-letsrock-ssr'),
     r('babel-plugin-transform-es2015-modules-commonjs'),
     r("babel-plugin-transform-decorators-legacy")
   ],
@@ -63,7 +64,7 @@ if (target == 'dev' || target == 'start') {
       path: {
         middleware: middlewarePath,
         service: servicePath,
-        controller: controllerPath 
+        controller: controllerPath
       },
       serviceLowerCasify: opts.serviceLowerCasify,
       port: opts.port
