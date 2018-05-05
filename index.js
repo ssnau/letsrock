@@ -78,7 +78,6 @@ if (target == 'dev' || target == 'start') {
     if (target == 'start' && !opts.cdnPrefix) {
       // build file first
       console.info('building static files to ', opts.to);
-      opts.babelQuery.plugins = [];
       getCompiler().run(function(err, stats) {
         if (!err) return console.log('success');
         return console.error(err);
@@ -93,7 +92,7 @@ if (target == 'dev' || target == 'start') {
 }
 
 function getCompiler() {
-  var webpackConfig = require('./getWebpackConfig')(opts, { isOnline: true });
+  var webpackConfig = require('./getWebpackConfig')(opts, {});
   var compiler = require('webpack')(webpackConfig)
   return compiler;
 }
@@ -106,7 +105,6 @@ if (target == 'build' || target == 'watch') {
     console.log( (endTime - startTime) + 'ms - build done!')
   });
   if (target == 'build') {
-    opts.babelQuery.plugins = [];
     return compiler.run(function(err, stats) {
       if (!err) {
         fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
@@ -206,6 +204,7 @@ if (target == 'sync') {
 if (!target) {
   console.log('please use at least one of the sub commands');
   console.log('- letsrock init project_name  : create a new project');
+  console.log('- letsrock start                : start a production server');
   console.log('- letsrock dev                : start a dev server');
   console.log('- letsrock build              : build jsx to dist folder');
   console.log('- letsrock watch              : build jsx to dist folder with watch feature enabled');

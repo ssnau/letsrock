@@ -38,7 +38,6 @@ function getWebpackEntries(opts, ext) {
   var to = path.relative(cwd, opts.to);
   var alias = opts.alias || {};
 
-  var isOnline = (ext || {}).isOnline;
   var entries = getEntries(templatePath);
   return opts.processWebpackConfig({
     entry: entries,
@@ -90,11 +89,11 @@ function getWebpackEntries(opts, ext) {
       alias: alias
     },
     plugins: [
-      isOnline ? new webpack.DefinePlugin({
+      global.__IS_DEV__ ? null: new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('production')
         }
-      }) : null,
+      }),
       new webpack.optimize.CommonsChunkPlugin({
         name: "_commons",
         minChunks: 2
