@@ -27,6 +27,8 @@
     "co-body": "^4.2.0",
     "css-loader": "^0.23.1",
     "empty-loader": "^1.0.1",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
     "glob": "^7.0.3",
     "handlebars": "^4.0.6",
     "json-loader": "^0.5.4",

@@ -1,9 +1,10 @@
+/* eslint-disable no-console */
 module.exports = function createEventStream(heartbeat) {
-  var clientId = 0;
-  var clients = {};
+  let clientId = 0;
+  const clients = {};
 
   function everyClient(fn) {
-    Object.keys(clients).forEach(function (id) {
+    Object.keys(clients).forEach((id) => {
       if (!clients[id]) return;
       try {
         fn(clients[id], id);
@@ -13,9 +14,9 @@ module.exports = function createEventStream(heartbeat) {
     });
   }
 
-  setInterval(function heartbeatTick() {
-    everyClient(function (client) {
-      client.write("data: \uD83D\uDC93\n\n");
+  setInterval(() => {
+    everyClient((client) => {
+      client.write('data: \uD83D\uDC93\n\n');
     });
   }, heartbeat).unref();
   function closeAll(pattern) {
@@ -28,8 +29,8 @@ module.exports = function createEventStream(heartbeat) {
   }
   return {
     close: closeAll,
-    handler: function (req, res) {
-      var ua = req.headers['user-agent'];
+    handler(req, res) {
+      const ua = req.headers['user-agent'];
       req.socket.setKeepAlive(true);
       // long enough (roughly 10 years) to make the socket never end..
       req.socket._idleTimeout = 1000 * 3600 * 24 * 7 * 30 * 12 * 365 * 10;
@@ -38,21 +39,21 @@ module.exports = function createEventStream(heartbeat) {
         'Content-Type': 'text/event-stream;charset=utf-8',
         'Transfer-Encoding': 'chunked',
         'Cache-Control': 'no-cache, no-transform',
-        'Connection': 'keep-alive'
+        Connection: 'keep-alive',
       });
       res.write('\n');
       closeAll(ua); // close all the connections relate to the ua
       ++clientId;
-      var id = ua + "-" + clientId;
+      const id = `${ua}-${clientId}`;
       clients[id] = res;
-      req.on("close", function () {
+      req.on('close', () => {
         delete clients[id];
       });
     },
-    publish: function (payload) {
-      everyClient(function (client) {
-        client.write("data: " + JSON.stringify(payload) + "\n\n");
+    publish(payload) {
+      everyClient((client) => {
+        client.write(`data: ${JSON.stringify(payload)}\n\n`);
       });
-    }
+    },
   };
 };

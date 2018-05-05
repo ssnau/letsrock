@@ -1,31 +1,30 @@
-var path = require('path');
-var getbabelRelayPlugin = require('babel-relay-plugin');
-var r = name => require.resolve(name);
-var rc = require("./getRC")(global.getCWD());
+const r = name => require.resolve(name);
+const rc = require('./getRC')(global.getCWD());
 
 // if relay enabled
-var relayPreset, flowPreset;
+let relayPreset;
+let flowPreset;
 if (rc.relay) {
   relayPreset = {
-    "plugins": [
-      r('./relayBabelPreset')
-    ]
+    plugins: [
+      r('./relayBabelPreset'),
+    ],
   };
 }
 if (rc.flow) {
-  flowPreset = r('babel-preset-flow')
+  flowPreset = r('babel-preset-flow');
 }
-var valfn = x => x;
-var postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
-const isdev = global.__IS_DEV__
+const valfn = x => x;
+const postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
+const isdev = global.__IS_DEV__;
 
 module.exports = postProcessBabelQuery({
   passPerPreset: true,
   presets: [
     relayPreset,
     flowPreset,
-    r("babel-preset-react"),
-    r("babel-preset-turbo"),  // transform into es5
+    r('babel-preset-react'),
+    r('babel-preset-turbo'), // transform into es5
   ].filter(Boolean),
   plugins: [
     [r('./babel-plugin-letsrock-ssr')],
@@ -33,11 +32,11 @@ module.exports = postProcessBabelQuery({
       transforms: [{
         transform: r('react-transform-hmr'),
         imports: ['react'],
-        locals: ['module']
+        locals: ['module'],
       }, {
         transform: r('react-transform-catch-errors'),
-        imports: ['react', r('redbox-react')]
-      }]
+        imports: ['react', r('redbox-react')],
+      }],
     }].filter(Boolean) : null,
-  ].filter(Boolean)
+  ].filter(Boolean),
 });

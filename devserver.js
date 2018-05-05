@@ -1,36 +1,39 @@
-"use strict";
+/* eslint-disable no-param-reassign, func-names, no-console, consistent-return, require-yield */
 
-var getWebpackConfig = require('./getWebpackConfig');
-var createEventStream = require('./createEventStream');
-var MemoryFileSystem = require("memory-fs");
-var path = require('path');
-var co = require('co');
+const webpack = require('webpack');
+const getWebpackConfig = require('./getWebpackConfig');
+const createEventStream = require('./createEventStream');
+const MemoryFileSystem = require('memory-fs');
+const path = require('path');
 
 const FILE_PATH = '/__hmr_file';
 const EVENT_PATH = '/__hmr_event';
-var __id = 0;
-var noop = function () { };
-module.exports = function (opts) {
-  var templatePath = opts.from;
-  var alias = opts.alias;
-  var cssPath = opts.cssPath;
-  var postProcessConfig = opts.postProcessConfig || noop;
-  var keepAlive = !!opts.keepAlive;
+let __id = 0;
+const noop = function () { };
+function watch() { console.log('watch is not avaible'); }
+module.exports = function runDevServer(opts) {
+  const templatePath = opts.from;
+  const postProcessConfig = opts.postProcessConfig || noop;
 
-  var serveFilePath = opts.serveFilePath || FILE_PATH;
+  const serveFilePath = opts.serveFilePath || FILE_PATH;
+  function buildModuleMap(modules) {
+    const map = {};
+    modules.forEach((module) => {
+      map[module.id] = module.name;
+    });
+    return map;
+  }
 
   return function (app) {
     function getCompiler() {
       if (app._compiler) return app._compiler;
-      var id = ++__id;
-      var path = require('path');
-      var webpack = require('webpack');
-      var hotPrefix = [
-        require.resolve('webpack-hot-middleware/client') + `?path=${EVENT_PATH}`,
+      const id = ++__id;
+      const hotPrefix = [
+        `${require.resolve('webpack-hot-middleware/client')}?path=${EVENT_PATH}`,
       ];
 
-      var webpackConfig = getWebpackConfig(opts);
-      Object.keys(webpackConfig.entry).forEach(function (key) {
+      const webpackConfig = getWebpackConfig(opts);
+      Object.keys(webpackConfig.entry).forEach((key) => {
         webpackConfig.entry[key] = hotPrefix.concat(webpackConfig.entry[key]);
       });
       webpackConfig.devtool = 'cheap-module-source-map';
@@ -41,14 +44,14 @@ module.exports = function (opts) {
         new webpack.DefinePlugin({
           'process.env': {
             NODE_ENV: '"development"',
-            IS_BROWSER: true
-          }
+            IS_BROWSER: true,
+          },
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
       ].concat(webpackConfig.plugins).filter(Boolean);
 
       postProcessConfig(webpackConfig);
-      var compiler = webpack(webpackConfig);
+      const compiler = webpack(webpackConfig);
       app._compiler = compiler;
 
       compiler.outputFileSystem = new MemoryFileSystem();
@@ -56,41 +59,42 @@ module.exports = function (opts) {
       compiler.__doneCallbacks = [];
       compiler.__compileCallbacks = [];
 
-      compiler.plugin("compile", x => compiler.__compileCallbacks.forEach(cb => cb(x)));
-      compiler.plugin("done", x => compiler.__doneCallbacks.forEach(cb => cb(x)));
+      compiler.plugin('compile', x => compiler.__compileCallbacks.forEach(cb => cb(x)));
+      compiler.plugin('done', x => compiler.__doneCallbacks.forEach(cb => cb(x)));
 
-      var watching = compiler.watch({ aggregateTimeout: 200 }, function (err) {
+      const watching = compiler.watch({ aggregateTimeout: 200 }, (err) => {
         if (err) throw err;
       });
       compiler.__watching = watching;
 
-      compiler.__doneCallbacks.push(stats => {
+      compiler.__doneCallbacks.push((stats) => {
         if (stats.compilation.errors && stats.compilation.errors.length) {
-          console.log(stats.compilation.errors)
+          console.log(stats.compilation.errors);
         }
-        console.info(`webpack${id}: bundle is now VALID.`)
+        console.info(`webpack${id}: bundle is now VALID.`);
 
         // output for debug only
         // compiler.outputFileSystem.writeFileSync('/_stats.json', JSON.stringify(stats.toJson()));
         global.HASH = stats.hash;
       });
-      compiler.__compileCallbacks.push(_ => {
-        console.log(`webpack${id} building...`);
-        eventStream.publish({ action: "building" });
-      });
 
       // event stream for hmr
-      var eventStream = createEventStream(10 * 1000);
-      compiler.__doneCallbacks.push(function (stats) {
+      const eventStream = createEventStream(10 * 1000);
+      compiler.__compileCallbacks.push(() => {
+        console.log(`webpack${id} building...`);
+        eventStream.publish({ action: 'building' });
+      });
+
+      compiler.__doneCallbacks.push((stats) => {
         stats = stats.toJson();
         console.log(`webpack${id} built ${stats.hash} in ${stats.time}ms`);
         eventStream.publish({
-          action: "built",
+          action: 'built',
           time: stats.time,
           hash: stats.hash,
           warnings: stats.warnings || [],
           errors: stats.errors || [],
-          modules: buildModuleMap(stats.modules)
+          modules: buildModuleMap(stats.modules),
         });
       });
       compiler.__eventStream = eventStream;
@@ -103,102 +107,90 @@ module.exports = function (opts) {
 
     function tree(data) {
       function isDir(item) {
-        if (typeof item !== "object") return false;
-        return item[""] === true;
+        if (typeof item !== 'object') return false;
+        return item[''] === true;
       }
 
       function isFile(item) {
-        if (typeof item !== "object") return false;
-        return !item[""];
+        if (typeof item !== 'object') return false;
+        return !item[''];
       }
 
-      var paths = [];
+      const paths = [];
 
-      function traverse(item, path) {
-        path = path || [];
-        if (isDir(item)) return Object.keys(item).forEach(k => traverse(item[k], path.concat(k)));
-        if (isFile(item)) return paths.push(path);
+      function traverse(item, mpath) {
+        mpath = mpath || [];
+        if (isDir(item)) return Object.keys(item).forEach(k => traverse(item[k], mpath.concat(k)));
+        if (isFile(item)) return paths.push(mpath);
       }
 
       Object.keys(data).forEach(k => traverse(data[k], ['', k]));
       return paths.map(p => p.join('/'));
     }
 
-    function* serveFile(context, next) {
-      var p = context.path.replace(serveFilePath, '');
+    function* serveFile(context) {
+      let p = context.path.replace(serveFilePath, '');
       p = p.replace('//', '/').replace('//', '/'); // remove accidental '//'
 
       try {
-        var compiler = getCompiler();
-        var mfs = compiler.outputFileSystem;
-        var tree_data = tree(mfs.data);
+        const compiler = getCompiler();
+        const mfs = compiler.outputFileSystem;
+        const treeData = tree(mfs.data);
 
         if (p === '/' || p === '') {
-          context.body = "<h1>File List:</h1>" + tree_data.map(x => `<a href="${serveFilePath + x}">${x}<a/>`).join('<br />');
+          context.body = `<h1>File List:</h1>${treeData.map(x => `<a href="${serveFilePath + x}">${x}<a/>`).join('<br />')}`;
           return;
         }
 
-        var compiler = getCompiler();
-        var content = mfs.readFileSync(p, 'utf8');
-        context.set("Access-Control-Allow-Origin", "*"); // To support XHR, etc.
-        context.set("Content-Type", 'application/x-javascript; char-set=utf-8');
-        context.set("Content-Length", content.length);
+        const content = mfs.readFileSync(p, 'utf8');
+        context.set('Access-Control-Allow-Origin', '*'); // To support XHR, etc.
+        context.set('Content-Type', 'application/x-javascript; char-set=utf-8');
+        context.set('Content-Length', content.length);
         context.body = content;
       } catch (e) {
         if (p.indexOf('.json') > -1) return; // do not log for the json corner case
-        console.log('[devserver] request file ' + p + ' meet error', e.stack);
+        console.log(`[devserver] request file ${p} meet error`, e.stack);
       }
     }
 
-    function* serveHot(context, next) {
+    function* serveHot(context) {
       context.respond = true; // bypass koa
       getCompiler().__eventStream.handler(context.req, context.res);
     }
 
-    function buildModuleMap(modules) {
-      var map = {};
-      modules.forEach(function (module) {
-        map[module.id] = module.name;
-      });
-      return map;
-    }
     app.use(function* (next) {
       if (this.path.indexOf(serveFilePath) > -1) return yield serveFile(this, next);
       if (this.path.indexOf(EVENT_PATH) > -1) return yield serveHot(this, next);
       yield next;
     });
     app.devserver = {
-      getURL: function (tplPath) {
+      getURL(tplPath) {
         return tplPath
           .replace(templatePath, serveFilePath)
           .replace(/(^\/^\/)/, '/')
-          .replace(/(js|jsx)$/, 'js')
-      }
+          .replace(/(js|jsx)$/, 'js');
+      },
     };
 
-    console.log('dev server is running. visit ' + serveFilePath + ' to see file compiled');
+    console.log(`dev server is running. visit ${serveFilePath} to see file compiled`);
 
     watch({
       path: templatePath,
       name: 'devserver',
       pattern: /index\.jsx?$/,
-      callback: function (file/*, info*/) {
-        var rp = path.relative(templatePath, file).replace(/index\.jsx?$/, 'index.js');
-        var compiler = getCompiler();
-        if (!compiler.outputFileSystem.existsSync('/' + rp)) {
+      callback(file/* , info */) {
+        const rp = path.relative(templatePath, file).replace(/index\.jsx?$/, 'index.js');
+        const compiler = getCompiler();
+        if (!compiler.outputFileSystem.existsSync(`/${rp}`)) {
           compiler.__watching.close(noop); // stop watching
           compiler.__doneCallbacks = [];
           compiler.__compileCallbacks = [];
-          compiler.__eventStream.close();  // close socket
+          compiler.__eventStream.close(); // close socket
           app._compiler = null;
           getCompiler();
         }
-      }
+      },
     });
-  }
-}
+  };
+};
 
-
-function watch(opts) {
-  console.log('watch is not avaible');
-}

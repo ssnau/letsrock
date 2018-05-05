@@ -1,8 +1,9 @@
+// @flow
 export default [
-{
-  url: '/',
-  async controller(response: Response) {
-    response.render({});
-  }
-}
+  {
+    url: '/',
+    async controller(response: Response) {
+      response.render({});
+    },
+  },
 ];

@@ -1,20 +1,23 @@
+// @flow
 import type { Context } from '../types/builtin';
 
 const parse = require('co-body');
 const co = require('co');
 
 class Request {
-  parsed: bool;
-  body: any;
-  context: Context;
+  context: Context
+  body: any
+  parsed: boolean
 
   constructor(context) {
     this.context = context;
+    this.body = null;
+    this.parsed = false;
   }
 
-  async getBody() : any {
+  async getBody(): any {
     const me = this;
-    return co(function* () {
+    return co(function* parseBody() {
       if (!me.parsed) {
         me.parsed = true;
         me.body = yield parse(me.context);

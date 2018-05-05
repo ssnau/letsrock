@@ -1,12 +1,13 @@
+// @flow
 module.exports = {
-  safe: function (fn) {
+  safe(fn) {
     try {
       return fn();
     } catch (e) {
-      return;
+      return undefined;
     }
   },
-  empty_str: v => (v || '')
+  empty_str: v => (v || ''),
 };
 
-export type inner_util = {};
+export type innerUtil = {};

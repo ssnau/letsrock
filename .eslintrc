@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended"
+  ],
+  "parser": "babel-eslint",
+  "plugins": [
+    "flowtype"
+  ],
+"globals": {
+ "__IS_DEV__": true,
+ "getCWD": true
+},
+  "rules": {
+"no-plusplus": "off",
+"no-underscore-dangle": "off",
+"no-return-assign": "off"
+   
+  }
+}
+
