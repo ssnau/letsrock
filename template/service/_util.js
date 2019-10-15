@@ -7,7 +7,7 @@ module.exports = {
       return undefined;
     }
   },
-  empty_str: v => (v || ''),
+  emptyStr: v => (v || ''),
 };
 
 export type innerUtil = {};
