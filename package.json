@@ -40,7 +40,7 @@
     "react-transform-catch-errors": "^1.0.2",
     "react-transform-hmr": "^1.0.4",
     "redbox-react": "^1.1.1",
-    "rekoa": "^2.2.0",
+    "rekoa": "^2.2.1",
     "style-loader": "^0.13.1",
     "uglify-js": "^2.7.5",
     "webpack": "^1.10.5",
