@@ -34,5 +34,5 @@ module.exports = {
 
   // free style app config
   // not used by letsrock
-  app: rc.app || { __emptyConfig: true },
+  app: rc,
 };
