@@ -6,7 +6,7 @@ const cwd = global.getCWD();
 const rc = require('./getRC')(cwd);
 
 const valueFn = x => x;
-module.exports = {
+module.exports = Object.assign({}, rc, {
   from: path.join(cwd, rc.src || 'src'),
   to: path.join(cwd, rc.dist || 'dist'),
 
@@ -31,8 +31,4 @@ module.exports = {
   serviceLowerCasify: rc.serviceLowerCasify,
 
   static: rc.static,
-
-  // free style app config
-  // not used by letsrock
-  app: rc,
-};
+});
