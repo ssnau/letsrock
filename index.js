@@ -89,7 +89,7 @@ if (target === 'dev' || target === 'start') {
         { namespace: opts.static[key], maxage: MAX_AGE },
       )); // static resource folder
     });
-    if (target === 'start' && !opts.cdnPrefix) {
+    if (target === 'start' && !opts.skipBuildOnProduction) {
       // build file first
       console.info('building static files to ', opts.to);
       getCompiler().run((err) => {
