@@ -1,0 +1,6 @@
+node_modules
+dist
+__*
+newrelic_agent.log
+package-lock.json
+.rcrc_local

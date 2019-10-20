@@ -22,6 +22,9 @@ global.getCWD = getCWD;
 /** ********* */
 
 // START HERE: it is safe to require app files.
+const mypkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+console.log(`=== letsrock@${mypkg.version} ===`);
+
 const opts = require('./config');
 
 function getCompiler() {
@@ -138,6 +141,7 @@ if (target === 'init') {
   fs.createReadStream(path.join(__dirname, 'template/types/builtin.js')).pipe(fs.createWriteStream(path.join(base, 'types/builtin.js')));
   fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
   fs.createReadStream(path.join(__dirname, 'template/_d_flowconfig')).pipe(fs.createWriteStream(path.join(base, '.flowconfig')));
+  fs.createReadStream(path.join(__dirname, 'template/_d_gitignore')).pipe(fs.createWriteStream(path.join(base, '.gitignore')));
   console.log('setup project');
   controllerPath = path.join(base, 'controller');
   middlewarePath = path.join(base, 'middleware');

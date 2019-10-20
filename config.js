@@ -31,4 +31,8 @@ module.exports = {
   serviceLowerCasify: rc.serviceLowerCasify,
 
   static: rc.static,
+
+  // free style app config
+  // not used by letsrock
+  app: rc.app || { __emptyConfig: true },
 };
