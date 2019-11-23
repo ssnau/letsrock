@@ -85,7 +85,7 @@ function getInlineCss(css_path) {
   if (global.__IS_DEV__) {
     safe(() => css_cache[css_path] = fs.readFileSync(css_path, 'utf-8'));
   } else {
-    const minifiedPath = p.replace(/.css$/, '.min.css');
+    const minifiedPath = css_path.replace(/.css$/, '.min.css');
     safe(() => css_cache[css_path] = fs.readFileSync(minifiedPath, 'utf-8'));
   }
   return css_cache[css_path];
