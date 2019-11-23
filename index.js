@@ -116,6 +116,8 @@ if (target === 'build' || target === 'watch') {
     console.log(`${endTime - startTime}ms - build done!`);
   });
   if (target === 'build') {
+    console.log("# Building inline files");
+    require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
     return compiler.run((err, stats) => {
       if (!err) {
         fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');

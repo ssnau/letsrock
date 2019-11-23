@@ -6,7 +6,6 @@ const path = require('path');
 
 const opts = global.ROCK_CONFIG;
 const hbs = require('handlebars');
-const uglify = require('uglify-js');
 const { renderToString } = require('react-dom/server');
 const React = require('react');
 
@@ -67,15 +66,13 @@ const js_cache = {};
 
 function getMinifyJSfromPath(p) {
   /* eslint-disable no-console */
-  const content = safe(() => fs.readFileSync(p, 'utf8'));
-  if (!content) return '';
-  try {
-    return uglify.minify(content).code;
-  } catch (e) {
-    console.log(`minify error on file: ${p}`, e);
-    return '';
+  if (global.__IS_DEV__) {
+    return safe(() => fs.readFileSync(p, 'utf8'));
   }
+  const minifiedPath = p.replace(/.js$/, '.min.js');
+  return safe(() => fs.readFileSync(minifiedPath, 'utf8'));
 }
+
 function getInlineJS(js_path) {
   if (js_cache[js_path] && !global.__IS_DEV__) return js_cache[js_path];
   js_cache[js_path] = getMinifyJSfromPath(js_path) || ' '; // make sure not empty
@@ -85,8 +82,12 @@ function getInlineJS(js_path) {
 const css_cache = {};
 function getInlineCss(css_path) {
   if (css_cache[css_path] && !global.__IS_DEV__) return css_cache[css_path];
-  safe(() => css_cache[css_path] = fs.readFileSync(css_path, 'utf-8'));
-  css_cache[css_path] = (css_cache[css_path] || ' ').replace(/\n/g, '');
+  if (global.__IS_DEV__) {
+    safe(() => css_cache[css_path] = fs.readFileSync(css_path, 'utf-8'));
+  } else {
+    const minifiedPath = p.replace(/.css$/, '.min.css');
+    safe(() => css_cache[css_path] = fs.readFileSync(minifiedPath, 'utf-8'));
+  }
   return css_cache[css_path];
 }
 

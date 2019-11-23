@@ -4,3 +4,5 @@ __*
 newrelic_agent.log
 package-lock.json
 .rcrc_local
+inline.min.js
+inline.min.css
