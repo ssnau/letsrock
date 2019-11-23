@@ -131,7 +131,6 @@ function template({
   </script>
   </head>
   ${finalBody}
-  </script>
 </html>`;
 }
 
@@ -191,13 +190,13 @@ class Response {
       hbscache[tpl_path] = tplfn;
     }
     // deal with inline resource (inline.js / inline.css)
-    const inlineJS = getInlineJS(path.join(opts.from, tpl || _path, 'inline.js'));
-    const inlineCSS = getInlineCss(path.join(opts.from, tpl || _path, 'inline.css'));
+    const inlineJS = getInlineJS(path.join(opts.from, tpl || _path, 'inline.js')) || '';
+    const inlineCSS = getInlineCss(path.join(opts.from, tpl || _path, 'inline.css')) || '';
     context.type = 'text/html';
     context.body = template({
       title: page_meta.title,
       metas,
-      body: `<style>${inlineCSS}</style>${tplfn(Object.assign({ $context: context }, data))}<script>${inlineJS}</script>`,
+      body: `<body><style>${inlineCSS}</style>${tplfn(Object.assign({ $context: context }, data))}<script>${inlineJS}</script></body>`,
     });
   }
 
