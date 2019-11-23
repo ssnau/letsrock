@@ -107,7 +107,8 @@ function getWebpackEntries(opts) {
             .filter(f => /.js$/.test(f))
             .filter(f => !/.min.js$/.test(f))
             .forEach((f) => {
-              fs.writeFileSync(f.replace(/.js$/, '.min.js'), uglify.minify(f).code);
+              const c = fs.readFileSync(f, 'utf8');
+              fs.writeFileSync(f.replace(/.js$/, '.min.js'), uglify.minify(c).code);
             });
         });
       },
