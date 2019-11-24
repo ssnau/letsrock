@@ -86,9 +86,15 @@ if (target === 'dev' || target === 'start') {
     require('./builtin')(app);
     app.use(kstatic(path.join(cwd, '_res'), { namespace: '_res', maxage: MAX_AGE })); // static resource folder
     // extra static folder
+    // example of static:
+    // {
+    //   '_extra': 'extra',  // relative path
+    //   '/some/where/tmp': 'tmp',  // absolute path
+    // }
     Object.keys(opts.static || {}).forEach((key) => {
+      const mounted = key.indexOf('/') === 0 ? key : path.join(cwd, key);
       app.use(kstatic(
-        path.join(cwd, key),
+        mounted,
         { namespace: opts.static[key], maxage: MAX_AGE },
       )); // static resource folder
     });
