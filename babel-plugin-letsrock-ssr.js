@@ -44,7 +44,12 @@ module.exports = function (babel) {
           const { body } = _path.node;
           const filepath = file.opts.filename;
           // fast check!! 必须是index.js或index.jsx文件
-          if (!/index\.jsx?$/.test(filepath)) return;
+          // 或 check for ${name}/${name}.jsx pattern
+          const pconfig = path.parse(filepath);
+          const sections = pconfig.dir.split('/');
+          const valid = (sections[sections.length - 1] === pconfig.name ||
+            pconfig.base === 'index.jsx' || pconfig.base === 'index.js')
+          if (!valid) return;
 
           // 只處理src下的
           if (filepath.indexOf(path.join(global.APP_BASE, 'src')) !== 0) return;
