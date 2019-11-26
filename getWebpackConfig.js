@@ -3,7 +3,7 @@ const glob = require('glob');
 
 const cwd = global.getCWD();
 const webpack = require('webpack');
-const uglify = require('uglify-js');
+const uglify = require('uglify-es');
 const fs = require('fs');
 
 function getEntries(tpath) {

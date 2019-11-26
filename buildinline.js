@@ -1,4 +1,4 @@
-const uglifyJS = require('uglify-js');
+const uglifyJS = require('uglify-es');
 const uglifyCSS = require('uglifycss');
 const glob = require('glob');
 const fs = require('fs');
@@ -31,6 +31,7 @@ function build(tpath) {
       if (!outfile) return;
       fs.writeFileSync(outfile, out, 'utf8');
     });
+  console.log("[done] build line.")
 }
 
 function es5ify(content) {
