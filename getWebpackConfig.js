@@ -41,18 +41,48 @@ function getWebpackEntries(opts) {
   const entries = getEntries(templatePath);
   return opts.processWebpackConfig({
     entry: entries,
+    optimization: {
+      splitChunks: {
+        chunks: "all"
+      }
+    },
     module: {
-      // Disable handling of unknown requires
-      unknownContextRegExp: /$^/,
-      unknownContextCritical: false,
+      rules: [{
+        test: /\.(es6|js|jsx)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: ('babel-loader'),
+          options: opts.babelQuery
+        },
+      }],
+      /*
+      rules: [{
+        test: /\.(es6|js|jsx)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: r('babel-loader'),
+          options: opts.babelQuery
+        }
+      }, {
+        test: /\.(json)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: r([ 'json-loader', ]),
+        }
+      }, {
+        test: /\.(css)$/,
+        use: {
+          loaders: r([ 'style-loader', 'css-loader', ]),
+        }
+      }, {
+        test: /\.(less|scss|md)$/,
+        use: {
+          loader: r(['empty-loader']),
+        }
+      }],
+      */
 
-      // Disable handling of requires with a single expression
-      exprContextRegExp: /$^/,
-      exprContextCritical: false,
-
-      // Warn for every expression in require
-      wrappedContextCritical: true,
-
+      /*
       loaders: [
         {
           exclude: /node_modules/,
@@ -62,15 +92,11 @@ function getWebpackEntries(opts) {
         },
         {
           exclude: /node_modules/,
-          loaders: r([
-            'json-loader',
-          ]),
+          loaders: r([ 'json-loader', ]),
           test: /\.(json)$/,
         },
         {
-          loaders: r([
-            'style-loader', 'css-loader',
-          ]),
+          loaders: r([ 'style-loader', 'css-loader', ]),
           test: /\.(css)$/,
         },
         {
@@ -78,6 +104,7 @@ function getWebpackEntries(opts) {
           test: /\.(less|scss|md)$/,
         },
       ],
+      */
     },
     output: {
       path: to,
@@ -85,7 +112,7 @@ function getWebpackEntries(opts) {
       chunkFilename: '[chunkhash].js',
     },
     resolve: {
-      extensions: ['', '.js', '.jsx'],
+      //extensions: ['', '.js', '.jsx'],
       alias,
     },
     plugins: [
@@ -94,10 +121,12 @@ function getWebpackEntries(opts) {
           NODE_ENV: JSON.stringify('production'),
         },
       }),
-      new webpack.optimize.CommonsChunkPlugin({
+      /*
+      new webpack.optimize.splitChunks({
         name: '_commons',
         minChunks: 2,
       }),
+      */
       function doneIt() {
         this.plugin('done', (stats) => {
           global.HASH = stats.hash;
