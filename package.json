@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "argv": "0.0.2",
-    "babel-core": "^6.8.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^6.x",
     "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-flow": "^6.23.0",
@@ -25,7 +25,7 @@
     "babel-relay-plugin": "^0.8.1",
     "co": "^4.6.0",
     "co-body": "^4.2.0",
-    "css-loader": "^0.23.1",
+    "css-loader": "3.2.0",
     "empty-loader": "^1.0.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
@@ -34,7 +34,7 @@
     "json-loader": "^0.5.4",
     "koa-static-namespace": "^2.0.1",
     "memory-fs": "^0.3.0",
-    "mocha": "^3.4.2",
+    "mocha": "^6.2.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-transform-catch-errors": "^1.0.2",
@@ -44,9 +44,9 @@
     "style-loader": "^0.13.1",
     "uglify-js": "^3.6.9",
     "uglifycss": "0.0.29",
-    "webpack": "^1.10.5",
-    "webpack-dev-middleware": "^1.2.0",
-    "webpack-hot-middleware": "^2.4.1",
+    "webpack": "^4.41.2",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-hot-middleware": "^2.25.0",
     "xkit": "^1.1.1"
   }
 }
