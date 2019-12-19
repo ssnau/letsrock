@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"no test specified\" && exit 1"
+    "test": "echo \"no test specified\" && exit 1",
+    "lint": "eslint"
   },
   "bin": {
     "letsrock": "./bin/letsrock"
@@ -15,6 +16,7 @@
   "dependencies": {
     "argv": "0.0.2",
     "babel-core": "^6.8.0",
+    "babel-eslint": "^10.0.3",
     "babel-loader": "^6.x",
     "babel-plugin-react-transform": "^2.0.2",
     "babel-preset-flow": "^6.23.0",
@@ -29,6 +31,7 @@
     "empty-loader": "^1.0.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-flowtype": "^4.5.2",
     "glob": "^7.0.3",
     "handlebars": "^4.5.3",
     "json-loader": "^0.5.4",
@@ -49,5 +52,10 @@
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1",
     "xkit": "^1.1.1"
+  },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.16.0"
   }
 }
