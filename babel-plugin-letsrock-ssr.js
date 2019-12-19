@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const path = require('path');
+var helperPluginUtils = require("@babel/helper-plugin-utils");
+
+var core = require("@babel/core");
 
 function getNodeProjectRoot(cwd) {
   let count = 0;
@@ -33,8 +36,10 @@ const getRoot = (function () {
 }());
 
 module.exports = function (babel) {
+  babel.assertVersion(7);
   function parseCodeToAST(code) {
-    return babel.transform(code).ast.program.body;
+    // return babel.transform(code, { ast: true }).ast.program.body;
+    return babel.template.ast(code);
   }
   return {
     visitor: {
@@ -56,7 +61,8 @@ module.exports = function (babel) {
 
           const relname = path.relative(getRoot(filepath), filepath).replace(/\/index\.jsx?$/, '');
 
-          body.push(...parseCodeToAST(`
+          const t = { babel, core };
+          const appended = parseCodeToAST(`
 var ReactDOM = require('react-dom');
 var React = require('react');
 if (typeof window !== 'undefined') {
@@ -79,7 +85,13 @@ if (typeof exports["default"] === "function") {
     window._rockClasses = window._rockClasses || {};
     window._rockClasses["${relname}1"] = exports["default"];
   }
-}`));
+}`);
+          const f = parseCodeToAST('function heln() { return "hello_____joke"; } var abbb = "hhhhhhh";');
+          debugger;
+          console.log(f)
+          body.unshift(...f)
+          //body.push([babel.teamplate.ast('function() { return "hello_____joke"; }')])
+          //body.push(...appended);
         },
       },
     },

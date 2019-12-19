@@ -14,6 +14,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-flow": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.7",
+    "@babel/register": "^7.7.7",
     "argv": "0.0.2",
     "babel-core": "^6.8.0",
     "babel-eslint": "^10.0.3",
@@ -47,7 +53,7 @@
     "uglify-es": "^3.3.9",
     "uglify-js": "^3.6.9",
     "uglifycss": "0.0.29",
-    "webpack": "^4.41.2",
+    "webpack": "^4.41.4",
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
     "xkit": "^1.1.1"

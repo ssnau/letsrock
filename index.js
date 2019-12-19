@@ -29,6 +29,7 @@ const opts = require('./config');
 
 function getCompiler() {
   const webpackConfig = require('./getWebpackConfig')(opts, {});
+  console.log(webpackConfig);
   const compiler = require('webpack')(webpackConfig);
   return compiler;
 }
@@ -44,13 +45,12 @@ try {
 }
 
 const r = name => require.resolve(name);
-require('babel-register')({
+require('@babel/register')({
   // preset-react 已经包含了preset-flow
-  presets: [r('babel-preset-react')],
+  presets: [r('@babel/preset-react')],
   plugins: [
     r('./babel-plugin-letsrock-ssr'),
-    r('babel-plugin-transform-es2015-modules-commonjs'),
-    r('babel-plugin-transform-decorators-legacy'),
+    // r('babel-plugin-transform-es2015-modules-commonjs'),
   ],
 });
 const kstatic = require('./kstatic');
@@ -123,8 +123,9 @@ if (target === 'build' || target === 'watch') {
   });
   if (target === 'build') {
     console.log('# Building inline files');
-    require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
+    // require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
     return compiler.run((err, stats) => {
+      console.log({ err, stats  })
       if (!err) {
         fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
         return console.log('success');
