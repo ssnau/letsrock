@@ -1,0 +1,10 @@
+
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.x",
+    "babel-plugin-react-transform": "^2.0.2",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-preset-turbo": "^0.0.5",
+    "babel-register": "^6.9.0",
+    "babel-relay-plugin": "^0.8.1",

@@ -37,21 +37,27 @@ function getWebpackEntries(opts) {
   const templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
   const to = path.relative(cwd, opts.to);
   const alias = opts.alias || {};
-
   const entries = getEntries(templatePath);
+  console.log({entries});
   return opts.processWebpackConfig({
-    entry: entries,
+    entry: '/Users/xijin_liu/project/app-site/src/class/index.jsx',
+    /*
     optimization: {
       splitChunks: {
         chunks: "all"
       }
     },
+    */
+    output: {
+      path: opts.to,
+      filename: '[name].[hash].js', // Template based on keys in entry above
+      chunkFilename: '[chunkhash].js',
+    },
     module: {
       rules: [{
-        test: /\.(es6|js|jsx)$/,
-        exclude: [/node_modules/],
+        test: /\.(es6|js|jsx|ts)$/,
         use: {
-          loader: ('babel-loader'),
+          loader: r('babel-loader'),
           options: opts.babelQuery
         },
       }],
@@ -106,13 +112,10 @@ function getWebpackEntries(opts) {
       ],
       */
     },
-    output: {
-      path: to,
-      filename: '[name].[hash].js', // Template based on keys in entry above
-      chunkFilename: '[chunkhash].js',
-    },
+    target: 'web',
+    devtool: 'source-map',
     resolve: {
-      //extensions: ['', '.js', '.jsx'],
+      extensions: ['.js', '.jsx'],
       alias,
     },
     plugins: [
@@ -132,7 +135,7 @@ function getWebpackEntries(opts) {
           global.HASH = stats.hash;
           if (__IS_DEV__) return;
           glob
-            .sync(`${to}/**`)
+            .sync(`${opts.to}/**`)
             .filter(f => /.js$/.test(f))
             .filter(f => !/.min.js$/.test(f))
             .forEach((f) => {

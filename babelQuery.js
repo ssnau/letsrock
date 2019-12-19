@@ -12,7 +12,7 @@ if (rc.relay) {
   };
 }
 if (rc.flow) {
-  flowPreset = r('babel-preset-flow');
+  flowPreset = r('@babel/preset-flow');
 }
 const valfn = x => x;
 const postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
@@ -23,11 +23,13 @@ module.exports = postProcessBabelQuery({
   presets: [
     relayPreset,
     flowPreset,
-    r('babel-preset-react'),
-    r('babel-preset-turbo'), // transform into es5
+    r('@babel/preset-react'),
+    // babel-plugin-transform-async-to-generator-2
+    // babel-plugin-turbo-name
+  //  r('babel-preset-turbo'), // transform into es5
   ].filter(Boolean),
   plugins: [
-    [r('./babel-plugin-letsrock-ssr')],
+    r('./babel-plugin-letsrock-ssr'),
     isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
         transform: r('react-transform-hmr'),
