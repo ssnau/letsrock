@@ -4,6 +4,8 @@ const uglifyCSS = require('uglifycss');
 const glob = require('glob');
 const fs = require('fs');
 const babel = require('@babel/core');
+const { formatSize, getFilesizeInBytes } = require('./util');
+const chalk = require('chalk');
 
 const r = name => require.resolve(name);
 function es5ify(content) {
@@ -59,7 +61,9 @@ function build(tpath) {
         return '';
       })();
       if (!outfile) return;
-      console.log(`* ${  outfile}`);
+      const osize = chalk.red(formatSize(getFilesizeInBytes(absfile)));
+      const size = chalk.green(formatSize(getFilesizeInBytes(outfile)));
+      console.log(`* ${outfile} / ${osize} -> ${size}`);
       fs.writeFileSync(outfile, out, 'utf8');
     });
   console.log('[done] build inline.');

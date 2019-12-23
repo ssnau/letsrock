@@ -7,6 +7,8 @@ const webpack = require('webpack');
 const WebpackBar = require('webpackbar');
 const uglify = require('uglify-es');
 const fs = require('fs');
+const chalk = require('chalk');
+const { formatSize, getFilesizeInBytes } = require('./util');
 
 function getEntries(tpath) {
   const templatePath = tpath.replace(/\/$/, '');
@@ -107,9 +109,11 @@ function getWebpackConfig(opts) {
                 const c = fs.readFileSync(f, 'utf8');
                 const outfile = f.replace(/.js$/, '.min.js');
                 fs.writeFileSync(outfile, uglify.minify(c).code);
-                console.log(`* ${outfile}`);
+                const osize = chalk.red(formatSize(getFilesizeInBytes(f)));
+                const size = chalk.green(formatSize(getFilesizeInBytes(outfile)));
+                console.log(`* ${outfile} / ${osize} -> ${size}`);
               });
-            const totalTime = `${((Date.now() - startTime) / 1000).toFixed(2) }s`;
+            const totalTime = `${((Date.now() - startTime) / 1000).toFixed(2)}s`;
             console.log(`[webpack] minify done, totally ${totalTime}.`);
           });
         },

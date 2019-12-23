@@ -23,6 +23,7 @@
     "argv": "0.0.2",
     "babel-loader": "^8.0.6",
     "babel-plugin-import": "^1.13.0",
+    "chalk": "^3.0.0",
     "co-body": "^4.2.0",
     "css-loader": "3.2.0",
     "empty-loader": "^1.0.1",

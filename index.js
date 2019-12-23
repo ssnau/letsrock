@@ -22,8 +22,6 @@ global.getCWD = getCWD;
 /** ********* */
 
 // START HERE: it is safe to require app files.
-const mypkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
-console.log(`=== letsrock@${mypkg.version} ===`);
 
 const opts = require('./config');
 
@@ -45,7 +43,6 @@ try {
 
 const r = name => require.resolve(name);
 require('@babel/register')({
-  // preset-react 已经包含了preset-flow
   presets: [
     r('@babel/preset-flow'),
     r('@babel/preset-react'),
@@ -62,6 +59,9 @@ let middlewarePath = path.join(cwd, 'middleware');
 let servicePath = path.join(cwd, 'service');
 const MAX_AGE = 3153600000;
 
+// OUTPUT VERSION INFO
+const mypkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+console.log('letsrock@v' + mypkg.version);
 
 if (target === 'debug') {
   console.log(`node debug ${__dirname} dev`);
@@ -73,7 +73,6 @@ if (target === 'dev' || target === 'start') {
   if (fs.existsSync(path.join(cwd, '_startup.js'))) m = require(path.join(cwd, '_startup.js'));
   const p = (m && m.then) ? m : Promise.resolve();
   p.then(() => {
-    console.log(`lib path is ${__dirname}`);
     const app = require('rekoa')({
       isDevelopment: target === 'dev',
       base: cwd,
