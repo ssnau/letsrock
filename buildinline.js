@@ -61,10 +61,10 @@ function build(tpath) {
         return '';
       })();
       if (!outfile) return;
+      fs.writeFileSync(outfile, out, 'utf8');
       const osize = chalk.red(formatSize(getFilesizeInBytes(absfile)));
       const size = chalk.green(formatSize(getFilesizeInBytes(outfile)));
       console.log(`* ${outfile} / ${osize} -> ${size}`);
-      fs.writeFileSync(outfile, out, 'utf8');
     });
   console.log('[done] build inline.');
 }

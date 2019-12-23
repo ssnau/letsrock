@@ -109,6 +109,7 @@ function getWebpackConfig(opts) {
                 const c = fs.readFileSync(f, 'utf8');
                 const outfile = f.replace(/.js$/, '.min.js');
                 fs.writeFileSync(outfile, uglify.minify(c).code);
+
                 const osize = chalk.red(formatSize(getFilesizeInBytes(f)));
                 const size = chalk.green(formatSize(getFilesizeInBytes(outfile)));
                 console.log(`* ${outfile} / ${osize} -> ${size}`);
