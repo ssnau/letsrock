@@ -16,14 +16,11 @@ class Request {
   }
 
   async getBody(): any {
-    const me = this;
-    return co(function* parseBody() {
-      if (!me.parsed) {
-        me.parsed = true;
-        me.body = yield parse(me.context);
-      }
-      return me.body;
-    });
+    if (!this.parsed) {
+      this.parsed = true;
+      this.body = await parse(this.context);
+    }
+    return this.body;
   }
 }
 

@@ -153,15 +153,15 @@ module.exports = function runDevServer(opts) {
       }
     }
 
-    function* serveHot(context) {
+    async function serveHot(context) {
       context.respond = true; // bypass koa
       getCompiler().__eventStream.handler(context.req, context.res);
     }
 
-    app.use(function* (next) {
-      if (this.path.indexOf(serveFilePath) > -1) return yield serveFile(this, next);
-      if (this.path.indexOf(EVENT_PATH) > -1) return yield serveHot(this, next);
-      yield next;
+    app.use(async function (ctx, next) {
+      if (ctx.path.indexOf(serveFilePath) > -1) return await serveFile(ctx, next);
+      if (ctx.path.indexOf(EVENT_PATH) > -1) return await serveHot(ctx, next);
+      await next();
     });
     app.devserver = {
       getURL(tplPath) {

@@ -53,7 +53,7 @@ require('babel-register')({
     r('babel-plugin-transform-decorators-legacy'),
   ],
 });
-const kstatic = require('koa-static-namespace');
+const kstatic = require('./kstatic');
 
 let controllerPath = path.join(cwd, 'controller');
 let middlewarePath = path.join(cwd, 'middleware');
