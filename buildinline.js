@@ -1,41 +1,11 @@
 /* eslint-disable no-console, import/no-dynamic-require, global-require, consistent-return */
-const uglifyJS = require('uglify-es');
-const uglifyCSS = require('uglifycss');
 const glob = require('glob');
 const fs = require('fs');
-const babel = require('@babel/core');
-const { formatSize, getFilesizeInBytes } = require('./util');
+const { formatSize, getFilesizeInBytes, minifyJS, minifyCSS } = require('./util');
 const chalk = require('chalk');
 
 const r = name => require.resolve(name);
-function es5ify(content) {
-  return babel.transform(content, {
-    presets: [
-      [
-        r('@babel/preset-env'),
-        {
-          targets: {
-            chrome: '58',
-            ie: '11',
-          },
-        },
-      ],
-    ],
-  }).code;
-}
 
-function minifyJS(content) {
-  const source = es5ify(content);
-  const { error, code } = uglifyJS.minify(source);
-  if (error) {
-    throw error;
-  }
-  return code;
-}
-
-function minifyCSS(content) {
-  return uglifyCSS.processString(content);
-}
 
 function build(tpath) {
   console.log('[builder] build inline');

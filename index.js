@@ -19,6 +19,7 @@ function getCWD() {
 global.__IS_DEV__ = (target === 'dev');
 global.APP_BASE = getCWD();
 global.getCWD = getCWD;
+global.ROCKUTIL = require('./util');
 /** ********* */
 
 // START HERE: it is safe to require app files.
