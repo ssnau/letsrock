@@ -155,14 +155,14 @@ module.exports = function runDevServer(opts) {
       }
     }
 
-    async function serveHot(context) {
-      context.respond = true; // bypass koa
+    function serveHot(context) {
+      context.respond = false; // bypass koa, koa@2 should set false
       getCompiler().__eventStream.handler(context.req, context.res);
     }
 
     app.use(async (ctx, next) => {
-      if (ctx.path.indexOf(serveFilePath) > -1) return serveFile(ctx, next);
-      if (ctx.path.indexOf(EVENT_PATH) > -1) return serveHot(ctx, next);
+      if (ctx.path.indexOf(serveFilePath) > -1) return serveFile(ctx);
+      if (ctx.path.indexOf(EVENT_PATH) > -1) return serveHot(ctx);
       await next();
     });
     app.devserver = {

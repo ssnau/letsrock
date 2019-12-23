@@ -27,19 +27,5 @@ module.exports = postProcessBabelQuery({
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
-    r('react-hot-loader/babel'),
-    // [r("babel-plugin-import"), { "libraryName": "antd", "style": true }]
-    /*
-    isdev ? [r('babel-plugin-react-transform'), {
-      transforms: [{
-        transform: r('react-transform-hmr'),
-        imports: ['react'],
-        locals: ['module'],
-      }, {
-        transform: r('react-transform-catch-errors'),
-        imports: ['react', r('redbox-react')],
-      }],
-    }].filter(Boolean) : null,
-*/
   ].filter(Boolean),
 });

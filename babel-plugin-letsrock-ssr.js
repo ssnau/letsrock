@@ -64,14 +64,15 @@ module.exports = function (babel) {
           const appended = parseCodeToAST(`
 var __$$rd = require('react-dom');
 var __$$r = require('react');
-if (typeof window !== 'undefined') {
+var hasWindow = typeof window !== 'undefined';
+if (hasWindow) {
  window.ReactDOM = __$$rd;
  window.React = __$$r;
 }
 if (typeof module["exports"] === "function") {
   module["exports"].rockName = "${relname}0";
 
-  if (typeof window !== "undefined") {
+  if (hasWindow) {
     window._rockClasses = window._rockClasses || {};
     window._rockClasses["${relname}0"] = module["exports"];
   }
@@ -80,11 +81,18 @@ if (typeof module["exports"] === "function") {
 if (typeof exports["default"] === "function") {
   exports["default"].rockName = "${relname}1";
 
-  if (typeof window !== "undefined") {
+  if (hasWindow) {
     window._rockClasses = window._rockClasses || {};
     window._rockClasses["${relname}1"] = exports["default"];
   }
-}`);
+}
+
+if (module.hot && module.id && hasWindow) {
+  window.__rockrender && window.__rockrender();
+  // most tricky part! no need to do any thing inside the function.
+  module.hot.accept(() => 0);
+}
+`);
           body.push(...appended)
         },
       },

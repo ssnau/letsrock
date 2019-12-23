@@ -86,7 +86,7 @@ function getWebpackConfig(opts) {
       alias,
     },
     plugins:
-      (global.__IS_DEV__ ? [] : [
+    (global.__IS_DEV__ ? [ ] : [
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('production'),
         }),

@@ -6,7 +6,10 @@ module.exports = function createEventStream(heartbeat) {
   function everyClient(fn) {
     Object.keys(clients).forEach((id) => {
       if (!clients[id]) return;
-      if (clients[id].finished) return;
+      if (clients[id].finished) {
+        console.log(`client #${id} seems like finished `)
+        return;
+      }
       try {
         fn(clients[id], id);
       } catch (e) {
@@ -17,12 +20,13 @@ module.exports = function createEventStream(heartbeat) {
 
   setInterval(() => {
     everyClient((client) => {
-      client.write('data: \uD83D\uDC93\n\n');
+      client.write('data: \uD83D\uDC93\n\n', 'utf8');
     });
   }, heartbeat).unref();
   function closeAll(pattern) {
     everyClient((client, id) => {
       if (id.indexOf(pattern || '') > -1) {
+        console.log('close: ' + id)
         client.end('');
         delete clients[id]; // clear clients
       }
