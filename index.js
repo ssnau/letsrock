@@ -127,9 +127,8 @@ if (target === 'build' || target === 'watch') {
   });
   if (target === 'build') {
     console.log('# Building inline files');
-    // require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
+    require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
     return compiler.run((err, stats) => {
-      console.log({ err, stats });
       if (!err) {
         fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
         return console.log('success');
