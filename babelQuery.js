@@ -28,7 +28,7 @@ module.exports = postProcessBabelQuery({
     r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
     r('react-hot-loader/babel'),
-    [r("babel-plugin-import"), { "libraryName": "antd", "style": true }]
+    // [r("babel-plugin-import"), { "libraryName": "antd", "style": true }]
     /*
     isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
