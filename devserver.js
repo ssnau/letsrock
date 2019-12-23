@@ -159,9 +159,9 @@ module.exports = function runDevServer(opts) {
       getCompiler().__eventStream.handler(context.req, context.res);
     }
 
-    app.use(async function (ctx, next) {
-      if (ctx.path.indexOf(serveFilePath) > -1) return await serveFile(ctx, next);
-      if (ctx.path.indexOf(EVENT_PATH) > -1) return await serveHot(ctx, next);
+    app.use(async (ctx, next) => {
+      if (ctx.path.indexOf(serveFilePath) > -1) return serveFile(ctx, next);
+      if (ctx.path.indexOf(EVENT_PATH) > -1) return serveHot(ctx, next);
       await next();
     });
     app.devserver = {

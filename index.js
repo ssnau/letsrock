@@ -49,7 +49,7 @@ require('@babel/register')({
   // preset-react 已经包含了preset-flow
   presets: [
     r('@babel/preset-flow'),
-    r('@babel/preset-react')
+    r('@babel/preset-react'),
   ],
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
@@ -129,7 +129,7 @@ if (target === 'build' || target === 'watch') {
     console.log('# Building inline files');
     // require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
     return compiler.run((err, stats) => {
-      console.log({ err, stats  })
+      console.log({ err, stats });
       if (!err) {
         fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
         return console.log('success');

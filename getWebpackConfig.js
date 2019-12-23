@@ -1,7 +1,6 @@
 const path = require('path');
 const glob = require('glob');
 
-const cwd = global.getCWD();
 const webpack = require('webpack');
 const uglify = require('uglify-es');
 const fs = require('fs');
@@ -35,7 +34,6 @@ function r(loaders) {
 
 function getWebpackEntries(opts) {
   const templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
-  const to = path.relative(cwd, opts.to);
   const alias = opts.alias || {};
   const entries = getEntries(templatePath);
   return opts.processWebpackConfig({
@@ -43,14 +41,14 @@ function getWebpackEntries(opts) {
     entry: entries,
     optimization: {
       splitChunks: {
-				cacheGroups: {
-					commons: {
-						test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-						name: '/_commons',
-						chunks: 'all',
-					}
-				}
-      }
+        cacheGroups: {
+          commons: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: '/_commons',
+            chunks: 'all',
+          },
+        },
+      },
     },
     output: {
       path: opts.to,
@@ -59,21 +57,21 @@ function getWebpackEntries(opts) {
     },
     module: {
       rules: [{
-          test: /\.(es6|js|jsx|ts)$/,
-          exclude: [/node_modules/],
-          use: {
-            loader: r('babel-loader'),
-            options: opts.babelQuery
-          },
+        test: /\.(es6|js|jsx|ts)$/,
+        exclude: [/node_modules/],
+        use: {
+          loader: r('babel-loader'),
+          options: opts.babelQuery,
         },
-        {
-          test: /\.css$/i,
-          use: [ r('style-loader'), r('css-loader')],
-        },
-        {
-          test: /\.(less|scss|md)$/,
-          use: [ r('empty-loader') ],
-        }
+      },
+      {
+        test: /\.css$/i,
+        use: [r('style-loader'), r('css-loader')],
+      },
+      {
+        test: /\.(less|scss|md)$/,
+        use: [r('empty-loader')],
+      },
       ],
     },
     target: 'web',

@@ -10,7 +10,7 @@ function setup(app) {
     safe(() => fs.readFileSync(path.join(getCWD(), 'favicon.jpg'))),
     safe(() => fs.readFileSync(path.join(__dirname, 'rocking.jpg'))),
   ].filter(Boolean)[0];
-  app.use(async function serveFavicon(ctx, next) {
+  app.use(async (ctx, next) => {
     if (ctx.path === '/favicon.ico') {
       ctx.set('Cache-Control', `public, max-age=${3600 * 24 * 7}`); // unit is 's'
       ctx.type = 'image/x-icon';

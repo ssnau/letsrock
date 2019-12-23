@@ -16,7 +16,6 @@ if (rc.flow) {
 }
 const valfn = x => x;
 const postProcessBabelQuery = rc.postProcessBabelQuery || valfn;
-const isdev = global.__IS_DEV__;
 
 module.exports = postProcessBabelQuery({
   passPerPreset: true,
@@ -29,7 +28,7 @@ module.exports = postProcessBabelQuery({
     r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
     r('react-hot-loader/babel'),
-/*
+    /*
     isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
         transform: r('react-transform-hmr'),
