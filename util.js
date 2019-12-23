@@ -6,5 +6,10 @@ module.exports = {
       return undefined;
     }
   },
+  time(action, fn) {
+    console.log(`[${action}] start`);
+    fn();
+    console.log(`[${action}] end`);
+  },
   emptyStr: v => (v || ''),
 };

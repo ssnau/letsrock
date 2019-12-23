@@ -3,12 +3,22 @@ const uglifyJS = require('uglify-es');
 const uglifyCSS = require('uglifycss');
 const glob = require('glob');
 const fs = require('fs');
-const babel = require('babel-core');
+const babel = require('@babel/core');
 
 const r = name => require.resolve(name);
 function es5ify(content) {
   return babel.transform(content, {
-    presets: [r('babel-preset-turbo')],
+    presets: [
+      [
+        r('@babel/preset-env'),
+        {
+          targets: {
+            chrome: '58',
+            ie: '11',
+          },
+        },
+      ],
+    ],
   }).code;
 }
 
@@ -26,6 +36,7 @@ function minifyCSS(content) {
 }
 
 function build(tpath) {
+  console.log('[builder] build inline');
   const templatePath = tpath.replace(/\/$/, '');
   glob
     .sync(`${templatePath}/**`)
@@ -48,11 +59,10 @@ function build(tpath) {
         return '';
       })();
       if (!outfile) return;
+      console.log(`* ${  outfile}`);
       fs.writeFileSync(outfile, out, 'utf8');
     });
-  console.log('[done] build line.');
+  console.log('[done] build inline.');
 }
-
-build(__dirname);
 
 module.exports = build;

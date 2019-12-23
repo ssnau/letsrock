@@ -1,7 +1,10 @@
+/* eslint-disable no-console, import/no-dynamic-require, global-require, consistent-return */
+
 const path = require('path');
 const glob = require('glob');
 
 const webpack = require('webpack');
+const WebpackBar = require('webpackbar');
 const uglify = require('uglify-es');
 const fs = require('fs');
 
@@ -32,7 +35,7 @@ function r(loaders) {
   return require.resolve(loaders);
 }
 
-function getWebpackEntries(opts) {
+function getWebpackConfig(opts) {
   const templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
   const alias = opts.alias || {};
   const entries = getEntries(templatePath);
@@ -80,27 +83,37 @@ function getWebpackEntries(opts) {
       extensions: ['.js', '.jsx'],
       alias,
     },
-    plugins: [
-      global.__IS_DEV__ ? null : new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production'),
+    plugins:
+      (global.__IS_DEV__ ? [] : [
+        new webpack.DefinePlugin({
+          'process.env.NODE_ENV': JSON.stringify('production'),
+        }),
+        new webpack.optimize.ModuleConcatenationPlugin(),
+        new webpack.NoEmitOnErrorsPlugin(),
+      ]).concat([
+        new WebpackBar(),
+        function doneIt() {
+          this.plugin('done', (stats) => {
+            global.HASH = stats.hash;
+            if (__IS_DEV__) return;
+
+            console.log('[webpack] minify files');
+            const startTime = Date.now();
+            glob
+              .sync(`${opts.to}/**`)
+              .filter(f => /.js$/.test(f))
+              .filter(f => !/.min.js$/.test(f))
+              .forEach((f) => {
+                const c = fs.readFileSync(f, 'utf8');
+                const outfile = f.replace(/.js$/, '.min.js');
+                fs.writeFileSync(outfile, uglify.minify(c).code);
+                console.log(`* ${outfile}`);
+              });
+            const totalTime = `${((Date.now() - startTime) / 1000).toFixed(2) }s`;
+            console.log(`[webpack] minify done, totally ${totalTime}.`);
+          });
         },
-      }),
-      function doneIt() {
-        this.plugin('done', (stats) => {
-          global.HASH = stats.hash;
-          if (__IS_DEV__) return;
-          glob
-            .sync(`${opts.to}/**`)
-            .filter(f => /.js$/.test(f))
-            .filter(f => !/.min.js$/.test(f))
-            .forEach((f) => {
-              const c = fs.readFileSync(f, 'utf8');
-              fs.writeFileSync(f.replace(/.js$/, '.min.js'), uglify.minify(c).code);
-            });
-        });
-      },
-    ].filter(Boolean),
+      ]).filter(Boolean),
     externals: [
       {
         config: 'var {} ', // 对于client端，config是空白
@@ -109,4 +122,4 @@ function getWebpackEntries(opts) {
   });
 }
 
-module.exports = getWebpackEntries;
+module.exports = getWebpackConfig;

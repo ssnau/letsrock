@@ -29,7 +29,6 @@ const opts = require('./config');
 
 function getCompiler() {
   const webpackConfig = require('./getWebpackConfig')(opts, {});
-  console.log(webpackConfig);
   const compiler = require('webpack')(webpackConfig);
   return compiler;
 }
@@ -54,7 +53,6 @@ require('@babel/register')({
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
-    // r('babel-plugin-transform-es2015-modules-commonjs'),
   ],
 });
 const kstatic = require('./kstatic');
@@ -121,12 +119,7 @@ if (target === 'dev' || target === 'start') {
 
 if (target === 'build' || target === 'watch') {
   const compiler = getCompiler();
-  compiler.plugin('done', (stats) => {
-    const { startTime, endTime } = stats;
-    console.log(`${endTime - startTime}ms - build done!`);
-  });
   if (target === 'build') {
-    console.log('# Building inline files');
     require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
     return compiler.run((err, stats) => {
       if (!err) {
