@@ -47,8 +47,12 @@ try {
 const r = name => require.resolve(name);
 require('@babel/register')({
   // preset-react 已经包含了preset-flow
-  presets: [r('@babel/preset-react')],
+  presets: [
+    r('@babel/preset-flow'),
+    r('@babel/preset-react')
+  ],
   plugins: [
+    r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
     // r('babel-plugin-transform-es2015-modules-commonjs'),
   ],

@@ -6,6 +6,7 @@ module.exports = function createEventStream(heartbeat) {
   function everyClient(fn) {
     Object.keys(clients).forEach((id) => {
       if (!clients[id]) return;
+      if (clients[id].finished) return;
       try {
         fn(clients[id], id);
       } catch (e) {

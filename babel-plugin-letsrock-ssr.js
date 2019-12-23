@@ -38,8 +38,7 @@ const getRoot = (function () {
 module.exports = function (babel) {
   babel.assertVersion(7);
   function parseCodeToAST(code) {
-    // return babel.transform(code, { ast: true }).ast.program.body;
-    return babel.template.ast(code);
+    return babel.transform(code, { ast: true }).ast.program.body;
   }
   return {
     visitor: {
@@ -63,11 +62,11 @@ module.exports = function (babel) {
 
           const t = { babel, core };
           const appended = parseCodeToAST(`
-var ReactDOM = require('react-dom');
-var React = require('react');
+var __$$rd = require('react-dom');
+var __$$r = require('react');
 if (typeof window !== 'undefined') {
- window.ReactDOM = ReactDOM;
- window.React = React;
+ window.ReactDOM = __$$rd;
+ window.React = __$$r;
 }
 if (typeof module["exports"] === "function") {
   module["exports"].rockName = "${relname}0";
@@ -86,12 +85,7 @@ if (typeof exports["default"] === "function") {
     window._rockClasses["${relname}1"] = exports["default"];
   }
 }`);
-          const f = parseCodeToAST('function heln() { return "hello_____joke"; } var abbb = "hhhhhhh";');
-          debugger;
-          console.log(f)
-          body.unshift(...f)
-          //body.push([babel.teamplate.ast('function() { return "hello_____joke"; }')])
-          //body.push(...appended);
+          body.push(...appended)
         },
       },
     },

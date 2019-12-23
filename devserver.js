@@ -11,6 +11,7 @@ const EVENT_PATH = '/__hmr_event';
 let __id = 0;
 const noop = function () { };
 function watch() { console.log('watch is not avaible'); }
+// NOTICE: hmr / hot-reload doesn't work quite well on webpack4
 module.exports = function runDevServer(opts) {
   const templatePath = opts.from;
   const postProcessConfig = opts.postProcessConfig || noop;
@@ -128,7 +129,7 @@ module.exports = function runDevServer(opts) {
       return paths.map(p => p.join('/'));
     }
 
-    function* serveFile(context) {
+    function serveFile(context) {
       let p = context.path.replace(serveFilePath, '');
       p = p.replace('//', '/').replace('//', '/'); // remove accidental '//'
 

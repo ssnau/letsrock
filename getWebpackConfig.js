@@ -38,79 +38,43 @@ function getWebpackEntries(opts) {
   const to = path.relative(cwd, opts.to);
   const alias = opts.alias || {};
   const entries = getEntries(templatePath);
-  console.log({entries});
   return opts.processWebpackConfig({
-    entry: '/Users/xijin_liu/project/app-site/src/class/index.jsx',
-    /*
+    mode: 'none',
+    entry: entries,
     optimization: {
       splitChunks: {
-        chunks: "all"
+				cacheGroups: {
+					commons: {
+						test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+						name: '/_commons',
+						chunks: 'all',
+					}
+				}
       }
     },
-    */
     output: {
       path: opts.to,
       filename: '[name].[hash].js', // Template based on keys in entry above
-      chunkFilename: '[chunkhash].js',
+      chunkFilename: '[name].[hash].js',
     },
     module: {
       rules: [{
-        test: /\.(es6|js|jsx|ts)$/,
-        use: {
-          loader: r('babel-loader'),
-          options: opts.babelQuery
-        },
-      }],
-      /*
-      rules: [{
-        test: /\.(es6|js|jsx)$/,
-        exclude: [/node_modules/],
-        use: {
-          loader: r('babel-loader'),
-          options: opts.babelQuery
-        }
-      }, {
-        test: /\.(json)$/,
-        exclude: [/node_modules/],
-        use: {
-          loader: r([ 'json-loader', ]),
-        }
-      }, {
-        test: /\.(css)$/,
-        use: {
-          loaders: r([ 'style-loader', 'css-loader', ]),
-        }
-      }, {
-        test: /\.(less|scss|md)$/,
-        use: {
-          loader: r(['empty-loader']),
-        }
-      }],
-      */
-
-      /*
-      loaders: [
-        {
-          exclude: /node_modules/,
-          loader: r('babel-loader'),
-          query: opts.babelQuery,
-          test: /\.(es6|js|jsx)$/,
+          test: /\.(es6|js|jsx|ts)$/,
+          exclude: [/node_modules/],
+          use: {
+            loader: r('babel-loader'),
+            options: opts.babelQuery
+          },
         },
         {
-          exclude: /node_modules/,
-          loaders: r([ 'json-loader', ]),
-          test: /\.(json)$/,
+          test: /\.css$/i,
+          use: [ r('style-loader'), r('css-loader')],
         },
         {
-          loaders: r([ 'style-loader', 'css-loader', ]),
-          test: /\.(css)$/,
-        },
-        {
-          loaders: r(['empty-loader']),
           test: /\.(less|scss|md)$/,
-        },
+          use: [ r('empty-loader') ],
+        }
       ],
-      */
     },
     target: 'web',
     devtool: 'source-map',
@@ -124,12 +88,6 @@ function getWebpackEntries(opts) {
           NODE_ENV: JSON.stringify('production'),
         },
       }),
-      /*
-      new webpack.optimize.splitChunks({
-        name: '_commons',
-        minChunks: 2,
-      }),
-      */
       function doneIt() {
         this.plugin('done', (stats) => {
           global.HASH = stats.hash;

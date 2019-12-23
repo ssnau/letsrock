@@ -24,12 +24,12 @@ module.exports = postProcessBabelQuery({
     relayPreset,
     flowPreset,
     r('@babel/preset-react'),
-    // babel-plugin-transform-async-to-generator-2
-    // babel-plugin-turbo-name
-  //  r('babel-preset-turbo'), // transform into es5
   ].filter(Boolean),
   plugins: [
+    r('@babel/plugin-transform-modules-commonjs'),
     r('./babel-plugin-letsrock-ssr'),
+    r('react-hot-loader/babel'),
+/*
     isdev ? [r('babel-plugin-react-transform'), {
       transforms: [{
         transform: r('react-transform-hmr'),
@@ -40,5 +40,6 @@ module.exports = postProcessBabelQuery({
         imports: ['react', r('redbox-react')],
       }],
     }].filter(Boolean) : null,
+*/
   ].filter(Boolean),
 });
