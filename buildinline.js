@@ -40,6 +40,7 @@ function minifyCSS(content) {
 function build(tpath) {
   console.log('[builder] build inline');
   const templatePath = tpath.replace(/\/$/, '');
+  const startTime = Date.now();
   glob
     .sync(`${templatePath}/**`)
     .filter(f => !/node_modules/.test(f))
@@ -66,7 +67,8 @@ function build(tpath) {
       const size = chalk.green(formatSize(getFilesizeInBytes(outfile)));
       console.log(`* ${outfile} / ${osize} -> ${size}`);
     });
-  console.log('[done] build inline.');
+  const totalTime = `${((Date.now() - startTime) / 1000).toFixed(2)}s`;
+  console.log(`[done] build inline, totally ${totalTime}.`);
 }
 
 module.exports = build;
