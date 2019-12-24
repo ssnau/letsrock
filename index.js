@@ -44,9 +44,11 @@ try {
 
 const r = name => require.resolve(name);
 require('@babel/register')({
+  extensions: ['.js', '.jsx', '.ts', '.tsx'],
   presets: [
     r('@babel/preset-flow'),
     r('@babel/preset-react'),
+    r('@babel/preset-typescript'),
   ],
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
@@ -62,7 +64,7 @@ const MAX_AGE = 3153600000;
 
 // OUTPUT VERSION INFO
 const mypkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
-console.log('letsrock@v' + mypkg.version);
+console.log(`letsrock@v${mypkg.version}`);
 
 if (target === 'debug') {
   console.log(`node debug ${__dirname} dev`);

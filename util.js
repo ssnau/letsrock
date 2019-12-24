@@ -2,6 +2,7 @@ const fs = require('fs');
 const uglifyJS = require('uglify-es');
 const uglifyCSS = require('uglifycss');
 const babel = require('@babel/core');
+
 const r = name => require.resolve(name);
 
 function formatSize(number) {
