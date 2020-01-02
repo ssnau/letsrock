@@ -52,6 +52,8 @@ require('@babel/register')({
   ],
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
+    r('@babel/plugin-proposal-optional-chaining'),
+    r('@babel/plugin-proposal-nullish-coalescing-operator'),
     r('./babel-plugin-letsrock-ssr'),
   ],
 });
