@@ -1,2 +1,6 @@
 #!/usr/bin/env node
-require('../');
+const rock = require('../');
+const argv = require('argv');
+
+const args = argv.option([]).run();
+rock.run(args.targets)
