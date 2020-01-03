@@ -9,10 +9,6 @@ const { execSync } = require('child_process');
 const readdir = require('xkit/fs/readdir');
 
 /** setup global variable * */
-function getCWD() {
-  return process.env.ROCK_DIR || process.cwd();
-}
-global.getCWD = getCWD;
 /*****[ setup babel  ]*******/
 const r = name => require.resolve(name);
 require('@babel/register')({
@@ -33,48 +29,33 @@ require('@babel/register')({
 
 // START HERE: it is safe to require app files.
 
-const opts = require('./config');
-
 function getCompiler() {
   const webpackConfig = require('./getWebpackConfig')(opts, {});
   const compiler = require('webpack')(webpackConfig);
   return compiler;
 }
 
-const cwd = getCWD();
-const HASH_PATH = path.join(cwd, 'HASH');
-global.ROCK_CONFIG = opts;
-
-try {
-  global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
-} catch (e) {
-  console.log('no hash...');
-}
-
-const r = name => require.resolve(name);
-require('@babel/register')({
-  extensions: ['.js', '.jsx', '.ts', '.tsx'],
-  presets: [
-    r('@babel/preset-flow'),
-    r('@babel/preset-react'),
-    r('@babel/preset-typescript'),
-  ],
-  plugins: [
-    r('@babel/plugin-transform-modules-commonjs'),
-    r('@babel/plugin-proposal-optional-chaining'),
-    r('@babel/plugin-proposal-nullish-coalescing-operator'),
-    r('./babel-plugin-letsrock-ssr'),
-  ],
-});
 const kstatic = require('./kstatic');
-
-
-function run(args) {
+function run(args, options) {
   const [ target, target2 ] = args;
+  options = options || {
+    appBase: null,
+  };
 
   global.__IS_DEV__ = (target === 'dev');
-  global.APP_BASE = getCWD();
   global.ROCKUTIL = require('./util');
+  global.getCWD = () => (options.appBase || process.env.ROCK_DIR || process.cwd()) ;
+  global.APP_BASE = options.appBase || getCWD();
+  global.ROCK_CONFIG = require('./config');
+
+  const rockOptions = global.ROCK_CONFIG;
+  const cwd = global.getCWD();
+  const HASH_PATH = path.join(cwd, 'HASH');
+  try {
+    global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
+  } catch (e) {
+    console.log(HASH_PATH + ': file not exists');
+  }
 
   let controllerPath = path.join(cwd, 'controller');
   let middlewarePath = path.join(cwd, 'middleware');
@@ -94,7 +75,7 @@ function run(args) {
     let m;
     if (fs.existsSync(path.join(cwd, '_startup.js'))) m = require(path.join(cwd, '_startup.js'));
     const p = (m && m.then) ? m : Promise.resolve();
-    p.then(() => {
+    return p.then(() => {
       const app = require('rekoa')({
         isDevelopment: target === 'dev',
         base: cwd,
@@ -103,8 +84,8 @@ function run(args) {
           service: servicePath,
           controller: controllerPath,
         },
-        serviceLowerCasify: opts.serviceLowerCasify,
-        port: opts.port,
+        serviceLowerCasify: rockOptions.serviceLowerCasify,
+        port: rockOptions.port,
       });
       require('./builtin')(app);
       app.use(kstatic(path.join(cwd, '_res'), { namespace: '_res', maxage: MAX_AGE })); // static resource folder
@@ -114,26 +95,27 @@ function run(args) {
       //   '_extra': 'extra',  // relative path
       //   '/some/where/tmp': 'tmp',  // absolute path
       // }
-      Object.keys(opts.static || {}).forEach((key) => {
+      Object.keys(rockOptions.static || {}).forEach((key) => {
         const mounted = key.indexOf('/') === 0 ? key : path.join(cwd, key);
         app.use(kstatic(
           mounted,
-          { namespace: opts.static[key], maxage: MAX_AGE },
+          { namespace: rockOptions.static[key], maxage: MAX_AGE },
         )); // static resource folder
       });
-      if (target === 'start' && !opts.skipBuildOnProduction) {
+      if (target === 'start' && !rockOptions.skipBuildOnProduction) {
         // build file first
-        console.info('building static files to ', opts.to);
+        console.info('building static files to ', rockOptions.to);
         getCompiler().run((err) => {
           if (!err) return console.log('success');
           return console.error(err);
         });
       }
       // use koa-static-namespace
-      app.use(kstatic(opts.to, { namespace: opts.serveFilePath, maxage: MAX_AGE }));
+      app.use(kstatic(rockOptions.to, { namespace: rockOptions.serveFilePath, maxage: MAX_AGE }));
       if (target === 'dev') require('./devserver')(opts)(app);
-      app.koa.keys = opts.keys || ['default key'];
+      app.koa.keys = rockOptions.keys || ['default key'];
       app.start();
+      return app;
     });
   }
 
@@ -141,7 +123,7 @@ function run(args) {
   if (target === 'build' || target === 'watch') {
     const compiler = getCompiler();
     if (target === 'build') {
-      require('./buildinline')(opts.from || opts.dir || opts.directory || opts.templatePath);
+      require('./buildinline')(rockOptions.from || rockOptions.dir || rockOptions.directory || rockOptions.templatePath);
       return compiler.run((err, stats) => {
         if (!err) {
           fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
