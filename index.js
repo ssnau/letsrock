@@ -51,6 +51,21 @@ try {
   console.log('no hash...');
 }
 
+const r = name => require.resolve(name);
+require('@babel/register')({
+  extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  presets: [
+    r('@babel/preset-flow'),
+    r('@babel/preset-react'),
+    r('@babel/preset-typescript'),
+  ],
+  plugins: [
+    r('@babel/plugin-transform-modules-commonjs'),
+    r('@babel/plugin-proposal-optional-chaining'),
+    r('@babel/plugin-proposal-nullish-coalescing-operator'),
+    r('./babel-plugin-letsrock-ssr'),
+  ],
+});
 const kstatic = require('./kstatic');
 
 
