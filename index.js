@@ -1,4 +1,4 @@
-/* eslint-disable no-console, import/no-dynamic-require, global-require, consistent-return */
+/* eslint-disable no-console, import/no-dynamic-require, global-require, consistent-return, no-param-reassign */
 
 // require 3rd party libs
 const path = require('path');
@@ -9,7 +9,7 @@ const { execSync } = require('child_process');
 const readdir = require('xkit/fs/readdir');
 
 /** setup global variable * */
-/*****[ setup babel  ]*******/
+/** ***[ setup babel  ]****** */
 const r = name => require.resolve(name);
 require('@babel/register')({
   extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -25,26 +25,23 @@ require('@babel/register')({
     r('./babel-plugin-letsrock-ssr'),
   ],
 });
-/****************************/
+/** ************************* */
 
 // START HERE: it is safe to require app files.
 
-function getCompiler() {
-  const webpackConfig = require('./getWebpackConfig')(opts, {});
-  const compiler = require('webpack')(webpackConfig);
-  return compiler;
-}
 
 const kstatic = require('./kstatic');
+
 function run(args, options) {
-  const [ target, target2 ] = args;
+  const [target, target2] = args;
   options = options || {
     appBase: null,
+    port: null,
   };
 
   global.__IS_DEV__ = (target === 'dev');
   global.ROCKUTIL = require('./util');
-  global.getCWD = () => (options.appBase || process.env.ROCK_DIR || process.cwd()) ;
+  global.getCWD = () => (options.appBase || process.env.ROCK_DIR || process.cwd());
   global.APP_BASE = options.appBase || getCWD();
   global.ROCK_CONFIG = require('./config');
 
@@ -54,8 +51,14 @@ function run(args, options) {
   try {
     global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
   } catch (e) {
-    console.log(HASH_PATH + ': file not exists');
+    console.log(`${HASH_PATH}: file not exists`);
   }
+
+  const getCompiler = function _getCompiler() {
+    const webpackConfig = require('./getWebpackConfig')(rockOptions);
+    const compiler = require('webpack')(webpackConfig);
+    return compiler;
+  };
 
   let controllerPath = path.join(cwd, 'controller');
   let middlewarePath = path.join(cwd, 'middleware');
@@ -85,7 +88,7 @@ function run(args, options) {
           controller: controllerPath,
         },
         serviceLowerCasify: rockOptions.serviceLowerCasify,
-        port: rockOptions.port,
+        port: options.port || rockOptions.port,
       });
       require('./builtin')(app);
       app.use(kstatic(path.join(cwd, '_res'), { namespace: '_res', maxage: MAX_AGE })); // static resource folder
@@ -112,7 +115,7 @@ function run(args, options) {
       }
       // use koa-static-namespace
       app.use(kstatic(rockOptions.to, { namespace: rockOptions.serveFilePath, maxage: MAX_AGE }));
-      if (target === 'dev') require('./devserver')(opts)(app);
+      if (target === 'dev') require('./devserver')(rockOptions)(app);
       app.koa.keys = rockOptions.keys || ['default key'];
       app.start();
       return app;
