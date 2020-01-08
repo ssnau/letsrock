@@ -70,7 +70,7 @@ function run(args, options) {
   console.log(`letsrock@v${mypkg.version}`);
 
   if (target === 'debug') {
-    console.log(`node debug ${__dirname} dev`);
+    console.log(`node debug ${__dirname}/bin/letsrock dev`);
     return;
   }
 
