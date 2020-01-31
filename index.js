@@ -22,6 +22,7 @@ require('@babel/register')({
     r('@babel/plugin-transform-modules-commonjs'),
     r('@babel/plugin-proposal-optional-chaining'),
     r('@babel/plugin-proposal-nullish-coalescing-operator'),
+    r('@babel/plugin-proposal-class-properties'),
     r('./babel-plugin-letsrock-ssr'),
   ],
 });
