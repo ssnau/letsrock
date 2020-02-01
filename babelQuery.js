@@ -22,6 +22,7 @@ module.exports = postProcessBabelQuery({
   presets: [
     relayPreset,
     flowPreset,
+    r('@babel/preset-typescript'),
     r('@babel/preset-react'),
   ].filter(Boolean),
   plugins: [
