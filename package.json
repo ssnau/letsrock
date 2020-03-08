@@ -13,6 +13,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ssnau/letsrock.git"
+  },
   "dependencies": {
     "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
