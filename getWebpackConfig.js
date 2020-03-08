@@ -18,15 +18,17 @@ function getEntries(tpath) {
     .filter(f => !/node_modules/.test(f))
     .filter((f) => {
       if (/index.jsx$/.test(f)) return true; // index.jsx is OK
+      if (/index.tsx$/.test(f)) return true; // index.tsx is OK
       const parts = f.split(path.sep);
       const len = parts.length;
       // suppose folder name is qr and we accept qr/qr.jsx as the main point
       // for the reason we don't we index.jsx flood every tab
       if (parts[len - 1].replace(/.jsx$/, '') === parts[len - 2]) return true;
+      if (parts[len - 1].replace(/.tsx$/, '') === parts[len - 2]) return true;
       return false;
     })
     .forEach((f) => {
-      const name = path.relative(templatePath, f).replace(/.(js|jsx)$/, '');
+      const name = path.relative(templatePath, f).replace(/.(js|jsx|tsx)$/, '');
       entries[name] = [f];
     });
   return entries;
@@ -62,7 +64,7 @@ function getWebpackConfig(opts) {
     },
     module: {
       rules: [{
-        test: /\.(es6|js|jsx|ts)$/,
+        test: /\.(es6|js|jsx|ts|tsx)$/,
         exclude: [/node_modules/],
         use: {
           loader: r('babel-loader'),
@@ -82,7 +84,7 @@ function getWebpackConfig(opts) {
     target: 'web',
     devtool: 'source-map',
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.tsx'],
       alias,
     },
     plugins:

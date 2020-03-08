@@ -1,6 +1,6 @@
 {
   "name": "letsrock",
-  "version": "3.3.1",
+  "version": "3.3.5",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/preset-env": "^7.7.7",
@@ -47,7 +48,7 @@
     "react-transform-catch-errors": "^1.0.2",
     "react-transform-hmr": "^1.0.4",
     "redbox-react": "^1.1.1",
-    "rekoa": "^3.2.9",
+    "rekoa": "^3.3.1",
     "style-loader": "^0.13.1",
     "uglify-es": "^3.3.9",
     "uglify-js": "^3.6.9",

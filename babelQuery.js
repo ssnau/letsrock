@@ -22,12 +22,14 @@ module.exports = postProcessBabelQuery({
   presets: [
     relayPreset,
     flowPreset,
+    r('@babel/preset-typescript'),
     r('@babel/preset-react'),
   ].filter(Boolean),
   plugins: [
     r('@babel/plugin-transform-modules-commonjs'),
     r('@babel/plugin-proposal-optional-chaining'),
     r('@babel/plugin-proposal-nullish-coalescing-operator'),
+    r('@babel/plugin-proposal-class-properties'),
     r('./babel-plugin-letsrock-ssr'),
   ].filter(Boolean),
 });
