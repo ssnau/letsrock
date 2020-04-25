@@ -27,16 +27,20 @@ function refreshAnalyzer() {
 }
 refreshAnalyzer();
 function analyzeFile(file) {
-  const deps = analyzer.getDeps(file, null, {
-    ignoreBuiltin: true,
-    supressNotFound: true,
-    ignorePattern: /node_modules/,
-  });
-  deps.forEach((d) => {
-    reverseDeps[d] = reverseDeps[d] || [];
-    reverseDeps[d].push(file);
-    reverseDeps[d] = uniq(reverseDeps[d]);
-  });
+  try {
+    const deps = analyzer.getDeps(file, null, {
+      ignoreBuiltin: true,
+      supressNotFound: true,
+      ignorePattern: /node_modules/,
+    });
+    deps.forEach((d) => {
+      reverseDeps[d] = reverseDeps[d] || [];
+      reverseDeps[d].push(file);
+      reverseDeps[d] = uniq(reverseDeps[d]);
+    });
+  } catch (e) {
+    console.log('analyze error:', e);
+  }
 }
 
 module.exports = function watch(opts, app) {
@@ -61,10 +65,17 @@ module.exports = function watch(opts, app) {
       revDeps.forEach((dep) => {
         delete require.cache[dep];
         analyzeFile(dep);
+      });
+      // 必须分成两片来执行。
+      // 确保不会一边delete，一边require
+      // 导致trigger的文件对另一个文件引用是失效的
+      revDeps.forEach((dep) => {
+        analyzeFile(dep);
         app.triggerWatch(dep);
         // eslint-disable-next-line
         safeRequire(dep);
       });
+
       analyzeFile(f);
     });
   });
