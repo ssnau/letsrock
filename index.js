@@ -7,6 +7,7 @@ const watch = require('xkit/fs/watch');
 const spawn = require('xkit/process/spawn');
 const { execSync } = require('child_process');
 const readdir = require('xkit/fs/readdir');
+const watchdog = require('./watchdog');
 
 /** setup global variable * */
 /** ***[ setup babel  ]****** */
@@ -116,7 +117,10 @@ function run(args, options) {
       }
       // use koa-static-namespace
       app.use(kstatic(rockOptions.to, { namespace: rockOptions.serveFilePath, maxage: MAX_AGE }));
-      if (target === 'dev') require('./devserver')(rockOptions)(app);
+      if (target === 'dev') {
+        require('./devserver')(rockOptions)(app);
+        watchdog(rockOptions, app);
+      }
       app.koa.keys = rockOptions.keys || ['default key'];
       app.start();
       return app;
