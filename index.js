@@ -75,6 +75,11 @@ function run(args, options) {
     return;
   }
 
+  // USE BABEL and ROCK_CONFIG to start anything
+  if (target === 'run') {
+    return require(path.join(cwd, target2));
+  }
+
   if (target === 'dev' || target === 'start') {
     let m;
     if (fs.existsSync(path.join(cwd, '_startup.js'))) m = require(path.join(cwd, '_startup.js'));
@@ -232,6 +237,7 @@ function run(args, options) {
     console.log('- letsrock dev                : start a dev server');
     console.log('- letsrock build              : build jsx to dist folder');
     console.log('- letsrock watch              : build jsx to dist folder with watch feature enabled');
+    console.log('- letsrock run              : run any javascript / typescript file');
   }
 }
 
