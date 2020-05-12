@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-const rock = require('../');
 const argv = require('argv');
-
 const args = argv.option([]).run();
+
+const rock = require('../');
 rock.run(args.targets)
