@@ -25,6 +25,7 @@ require('@babel/register')({
     r('@babel/plugin-proposal-nullish-coalescing-operator'),
     r('@babel/plugin-proposal-class-properties'),
     r('./babel-plugin-letsrock-ssr'),
+    r('./babel-plugin-letsrock-di'),
   ],
 });
 /** ************************* */
