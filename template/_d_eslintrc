@@ -1,20 +1,55 @@
-{
-  "extends": [
-    "airbnb",
-    "plugin:flowtype/recommended"
+module.exports = {
+  extends:  [
+    // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'plugin:@typescript-eslint/recommended',
+    // Uses eslint-config-prettier to disable ESLint rules
+    // from @typescript-eslint/eslint-plugin that would conflict with prettier
+    'prettier/@typescript-eslint',
+    // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors.
+    //Make sure this is always the last configuration in the extends array.
+    'plugin:prettier/recommended',
   ],
-  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "es6": true
+  },
+  //"parser": "babel-eslint",
+  parser:  '@typescript-eslint/parser',  // Specifies the ESLint parser
   "plugins": [
     "flowtype"
   ],
   "globals": {
    "__IS_DEV__": true,
-   "getCWD": true
+   "getCWD": true,
+   "window": true,
+   "document": true,
+   "alert": true
   },
   "rules": {
+    "no-param-reassign": "off",
     "no-plusplus": "off",
+    "no-alert": "off",
+    "no-console": "off",
+    "no-undef": "error",
     "no-underscore-dangle": "off",
-    "no-return-assign": "off"
+    "no-return-assign": "off",
+    "no-use-before-define": "off",
+    "eslint-disable-next-line": "off",
+    "consistent-return": "off",
+    "react/prop-types": "off",
+    "flowtype/no-types-missing-file-annotation": "off",
+    "jsx-a11y/anchor-is-valid":"off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false  }],
   }
 }
 

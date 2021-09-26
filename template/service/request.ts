@@ -1,5 +1,4 @@
-// @flow
-import type { Context } from '../types/builtin';
+import { Context } from '../types/base';
 
 const parse = require('co-body');
 const co = require('co');
@@ -9,13 +8,13 @@ class Request {
   body: any
   parsed: boolean
 
-  constructor(context) {
+  constructor(context: Context) {
     this.context = context;
     this.body = null;
     this.parsed = false;
   }
 
-  async getBody(): any {
+  async getBody(): Promise<any> {
     if (!this.parsed) {
       this.parsed = true;
       this.body = await parse(this.context);

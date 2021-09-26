@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "target": "es5",
+    "module": "commonjs",
+    "types": [
+      "node"
+    ]
+  },
+  "lib": ["es2017", "dom"],
+  "typeRoots": [
+    "node_modules/@types",
+    "types"
+  ],
+  "files": [
+    "template/types/base.d.ts"
+  ]
+}

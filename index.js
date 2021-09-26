@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-len
 /* eslint-disable no-console, import/no-dynamic-require, global-require, consistent-return, no-param-reassign */
 
 // require 3rd party libs
@@ -54,7 +55,6 @@ function run(args, options) {
   try {
     global.HASH = fs.readFileSync(HASH_PATH, 'utf8').trim();
   } catch (e) {
-    console.log(`${HASH_PATH}: file not exists`);
   }
 
   const getCompiler = function _getCompiler() {
@@ -160,15 +160,15 @@ function run(args, options) {
     execSync(`mkdir -p ${path.join(base, 'src/index')}`);
     execSync(`mkdir -p ${path.join(base, 'types')}`);
     fs.createReadStream(path.join(__dirname, 'template/src/index/index.jsx')).pipe(fs.createWriteStream(path.join(base, 'src/index/index.jsx')));
-    fs.createReadStream(path.join(__dirname, 'template/types/builtin.js')).pipe(fs.createWriteStream(path.join(base, 'types/builtin.js')));
+    fs.createReadStream(path.join(__dirname, 'template/types/base.d.ts')).pipe(fs.createWriteStream(path.join(base, 'types/base.d.ts')));
     fs.createReadStream(path.join(__dirname, 'template/_d_rcrc')).pipe(fs.createWriteStream(path.join(base, '.rcrc')));
-    fs.createReadStream(path.join(__dirname, 'template/_d_flowconfig')).pipe(fs.createWriteStream(path.join(base, '.flowconfig')));
     fs.createReadStream(path.join(__dirname, 'template/_d_gitignore')).pipe(fs.createWriteStream(path.join(base, '.gitignore')));
+    fs.createReadStream(path.join(__dirname, 'template/_d_eslintrc')).pipe(fs.createWriteStream(path.join(base, '.eslintrc.js')));
     console.log('setup project');
     controllerPath = path.join(base, 'controller');
     middlewarePath = path.join(base, 'middleware');
     servicePath = path.join(base, 'service');
-    execSync(`cd ${base} && npm init -f && npm i react react-dom co handlebars co-body --save && npm i --dev flow-bin`);
+    execSync(`cd ${base} && npm init -f && npm i react react-dom co handlebars co-body --save`);
     execSync(`mkdir ${controllerPath} && mkdir ${middlewarePath} && mkdir ${servicePath}`);
     execSync(`cp ${`${path.join(__dirname, 'template/controller')}/* ${controllerPath}`}`);
     execSync(`cp ${`${path.join(__dirname, 'template/middleware')}/* ${middlewarePath}`}`);
