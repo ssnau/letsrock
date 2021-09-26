@@ -1,4 +1,4 @@
-import { Meta } from '../types/base';
+import { Meta } from '../../types/base';
 
 const meta: Meta = {
   ssr: true,
