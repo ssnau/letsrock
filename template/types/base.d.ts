@@ -47,12 +47,12 @@ interface S2S {
 
 // for rendering
 interface Meta {
+  title: string;
   ssr?: boolean;
   skipHydrate?: boolean;
   merge_global_metas?: boolean;
   metas?: string;
   appId?: string;
-  title: string;
 }
 
 interface InjectionConditions {
@@ -270,3 +270,8 @@ export interface Controller {
     | "PUT";
   controller(context: Context): Promise<string | void>;
 }
+// Service
+interface Service {
+  _getInjections(): { [key: string]: cc };
+}
+
