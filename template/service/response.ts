@@ -195,7 +195,7 @@ function template({
 </body>
   `.trim();
   const LOCALHOST_BANNER = g.__IS_DEV__
-    ? `<div id="__lhb" style="position:fixed;top:12px;background:rgba(0,0,0,0.6);color:white;padding:8px;"> LOCALHOST </div>
+    ? `<div id="__lhb" style="position:fixed;top:12px;background:rgba(0,0,0,0.6);color:white;padding:8px;z-index:999;"> LOCALHOST </div>
     <script>!function(){var e,t,n,o,i=document.getElementById("__lhb");function s(s){i.style.left=e+s.clientX-n+"px",i.style.top=t+s.clientY-o+"px"}i.addEventListener("mousedown",function(i){e=this.offsetLeft,t=this.offsetTop,n=i.clientX,o=i.clientY,window.addEventListener("mousemove",s,!1),window.addEventListener("mouseup",function e(){window.removeEventListener("mousemove",s,!1),window.removeEventListener("mouseup",e,!1)},!1)},!1)}();</script>    `
     : "";
 

@@ -6,7 +6,6 @@ const chalk = require('chalk');
 
 const r = name => require.resolve(name);
 
-
 function build(tpath) {
   console.log('[builder] build inline');
   const templatePath = tpath.replace(/\/$/, '');
