@@ -225,6 +225,7 @@ function run(args, options) {
     const pkgjson = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf8'));
     if (pkgjson.name !== 'letsrock') return console.log('current folder not letsrock. stopped.');
     batch();
+    if (/linux/.test(require('os').platform())) return;
     watch({
       path: cwd,
       pattern: [/jsx$/, /js$/, /json$/],
