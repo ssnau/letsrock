@@ -9,6 +9,7 @@ const spawn = require('xkit/process/spawn');
 const { execSync } = require('child_process');
 const readdir = require('xkit/fs/readdir');
 const watchdog = require('./watchdog');
+const { minifyCSS, minifyJS } = require('./util');
 
 /** setup global variable * */
 /** ***[ setup babel  ]****** */
@@ -141,6 +142,15 @@ function run(args, options) {
       return compiler.run((err, stats) => {
         if (!err) {
           fs.writeFileSync(path.join(cwd, 'HASH'), stats.hash, 'utf8');
+          try {
+            const postbuild = require(path.join(cwd, 'postbuild'));
+            postbuild({
+              hash: stats.hash,
+              minifyJS,
+              minifyCSS,
+            })
+          } catch (e) {
+          }
           return console.log('success');
         }
         return console.error(err);

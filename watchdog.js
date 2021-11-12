@@ -41,6 +41,7 @@ function safeRequire(f) {
 }
 
 const reverseDeps = {};
+const normalDeps = {};
 let analyzer;
 function refreshAnalyzer() {
   analyzer = new Analyzer();
@@ -53,6 +54,8 @@ function analyzeFile(file) {
       supressNotFound: true,
       ignorePattern: /node_modules/,
     });
+    normalDeps[file] = deps;
+    // reverseDeps[a] = [b, c, d] means b or c or d has required a
     deps.forEach((d) => {
       reverseDeps[d] = reverseDeps[d] || [];
       reverseDeps[d].push(file);
@@ -86,16 +89,28 @@ module.exports = function watch(opts, app) {
         delete require.cache[dep];
         analyzeFile(dep);
       });
-      // 必须分成两片来执行。
-      // 确保不会一边delete，一边require
-      // 导致trigger的文件对另一个文件引用是失效的
+      // DFS reload.
+      const hasLoaded = {};
+      function reload(file) {
+        if (hasLoaded[file]) return;
+        // check if file was depended by others
+        if (!normalDeps[file] || normalDeps[file].length === 0) {
+          app.triggerWatch(file);
+          safeRequire(file);
+          hasLoaded[file] = true;
+          return;
+        }
+        normalDeps[file].forEach(reload);
+        if (!hasLoaded[file]) {
+          app.triggerWatch(file);
+          safeRequire(file);
+          hasLoaded[file] = true;
+        }
+      }
       revDeps.forEach((dep) => {
         analyzeFile(dep);
-        app.triggerWatch(dep);
-        // eslint-disable-next-line
-        safeRequire(dep);
+        reload(dep);
       });
-
       analyzeFile(f);
     });
   });
