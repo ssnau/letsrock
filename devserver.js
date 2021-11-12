@@ -63,8 +63,8 @@ module.exports = function runDevServer(opts) {
 
       compiler.plugin('compile', x => compiler.__compileCallbacks.forEach(cb => cb(x)));
       compiler.plugin('done', x => compiler.__doneCallbacks.forEach(cb => cb(x)));
-
-      const watching = compiler.watch({ aggregateTimeout: 200 }, (err) => {
+      const isLinux = /linux/.test(require('os').platform());
+      const watching = compiler.watch({ aggregateTimeout: 200, poll: isLinux ? 1000 : false }, (err) => {
         if (err) throw err;
       });
       compiler.__watching = watching;
