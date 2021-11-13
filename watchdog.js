@@ -72,9 +72,10 @@ module.exports = function watch(opts, app) {
     .map((folder) => path.join(global.APP_BASE, folder));
   const files = [].concat(...folders.map(getFilesFromDir));
   // eslint-disable-next-line no-console
-  console.log("start analyzing deps");
+  console.log("start analyzing deps for " + files.length + ' files');
+  const s = Date.now();
   files.forEach(analyzeFile);
-
+  console.log('analyze deps done. ' + Math.round(Date.now() - s) / 1000  + 's');
   (opts.watchFolders || []).forEach((p) => {
     const base = global.APP_BASE;
     _watch(path.join(base, p), (f) => {

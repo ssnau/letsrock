@@ -10,13 +10,15 @@ const fs = require('fs');
 const chalk = require('chalk');
 const { formatSize, getFilesizeInBytes } = require('./util');
 
-function getEntries(tpath) {
+function getEntries(tpath, whitelistString) {
   const templatePath = tpath.replace(/\/$/, '');
   const entries = {};
   glob
     .sync(`${templatePath}/**`)
     .filter(f => !/node_modules/.test(f))
     .filter((f) => {
+      // for perf reason.
+      if (whitelistString && f.indexOf(whitelistString) === -1) return false;
       if (/index.jsx$/.test(f)) return true; // index.jsx is OK
       if (/index.tsx$/.test(f)) return true; // index.tsx is OK
       const parts = f.split(path.sep);
@@ -31,6 +33,10 @@ function getEntries(tpath) {
       const name = path.relative(templatePath, f).replace(/.(js|jsx|tsx)$/, '');
       entries[name] = [f];
     });
+  // if whitelist is applied, print the files out to inform users.
+  if (whitelistString) {
+    Object.keys(entries).forEach(f => console.log('compile: ' + f));
+  }
   return entries;
 }
 
@@ -42,7 +48,7 @@ function r(loaders) {
 function getWebpackConfig(opts) {
   const templatePath = opts.from || opts.dir || opts.directory || opts.templatePath;
   const alias = opts.alias || {};
-  const entries = getEntries(templatePath);
+  const entries = getEntries(templatePath, opts.devServerWhitelistPage);
   return opts.processWebpackConfig({
     mode: 'none',
     entry: entries,

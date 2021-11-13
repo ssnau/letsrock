@@ -39,10 +39,10 @@ const kstatic = require('./kstatic');
 
 function run(args, options) {
   const [target, target2] = args;
-  options = options || {
+  options = Object.assign({}, options || {
     appBase: null,
     port: null,
-  };
+  });
 
   global.__IS_DEV__ = (target === 'dev');
   global.ROCKUTIL = require('./util');
@@ -125,6 +125,7 @@ function run(args, options) {
       // use koa-static-namespace
       app.use(kstatic(rockOptions.to, { namespace: rockOptions.serveFilePath, maxage: MAX_AGE }));
       if (target === 'dev') {
+	if (options.pages) rockOptions.devServerWhitelistPage = options.pages;
         require('./devserver')(rockOptions)(app);
         watchdog(rockOptions, app);
       }
@@ -220,6 +221,7 @@ function run(args, options) {
 
   const cpjs = () => execSync(`cp ${path.join(cwd, '*.js')} ${__dirname}`).toString();
   const cpjson = () => execSync(`cp ${path.join(cwd, '*.json')} ${__dirname}`).toString();
+  const cpbin = () => execSync(`cp -r ${path.join(cwd, 'bin')} ${__dirname}`).toString();
   const install = () => execSync(`cd ${__dirname} && npm i`);
   const batch = () => {
     spawn('git diff --name-only HEAD')
@@ -227,7 +229,7 @@ function run(args, options) {
         const { out } = res;
         const files = out.split('\n').map(x => x.trim()).filter(Boolean);
         console.log('\n******\nfiles are \n-----\n', files.join('\n'));
-        cpjs(); cpjson();
+        cpjs(); cpjson(); cpbin();
         if (files.some(f => /package.json/.test(f))) install();
       });
   };
@@ -248,12 +250,13 @@ function run(args, options) {
 
   if (!target) {
     console.log('please use at least one of the sub commands');
-    console.log('- letsrock init project_name  : create a new project');
+    console.log('- letsrock init project_name    : create a new project');
     console.log('- letsrock start                : start a production server');
-    console.log('- letsrock dev                : start a dev server');
-    console.log('- letsrock build              : build jsx to dist folder');
-    console.log('- letsrock watch              : build jsx to dist folder with watch feature enabled');
-    console.log('- letsrock run              : run any javascript / typescript file');
+    console.log('- letsrock dev                  : start a dev server. ');
+    console.log('  --pages="substr"              : only compile files with substr [for perf reason] ');
+    console.log('- letsrock build                : build jsx to dist folder');
+    console.log('- letsrock watch                : build jsx to dist folder with watch feature enabled');
+    console.log('- letsrock run                  : run any javascript / typescript file');
   }
 }
 

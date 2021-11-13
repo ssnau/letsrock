@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 const argv = require('argv');
-const args = argv.option([]).run();
+const args = argv.option([
+  {
+     name: 'pages',
+     type: 'string',
+  }
+]).run();
 
 const rock = require('../');
-rock.run(args.targets)
+rock.run(args.targets, args.options)

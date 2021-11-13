@@ -1,17 +1,19 @@
 /* eslint-disable no-param-reassign, func-names, no-console, consistent-return, require-yield */
 
-const webpack = require('webpack');
-const getWebpackConfig = require('./getWebpackConfig');
-const createEventStream = require('./createEventStream');
-const MemoryFileSystem = require('memory-fs');
-const path = require('path');
+const webpack = require("webpack");
+const getWebpackConfig = require("./getWebpackConfig");
+const createEventStream = require("./createEventStream");
+const MemoryFileSystem = require("memory-fs");
+const path = require("path");
 
-const FILE_PATH = '/__hmr_file';
-const EVENT_PATH = '/__hmr_event';
+const FILE_PATH = "/__hmr_file";
+const EVENT_PATH = "/__hmr_event";
 let __id = 0;
-const noop = function () { };
+const noop = function () {};
 
-function watch() { console.log('watch is not avaible'); }
+function watch() {
+  console.log("watch is not avaible");
+}
 // NOTICE: hmr / hot-reload doesn't work quite well on webpack4
 module.exports = function runDevServer(opts) {
   const templatePath = opts.from;
@@ -31,26 +33,34 @@ module.exports = function runDevServer(opts) {
       if (app._compiler) return app._compiler;
       const id = ++__id;
       const hotPrefix = [
-        `${require.resolve('webpack-hot-middleware/client')}?path=${EVENT_PATH}`,
+        `${require.resolve(
+          "webpack-hot-middleware/client"
+        )}?path=${EVENT_PATH}`,
       ];
 
       const webpackConfig = getWebpackConfig(opts);
       Object.keys(webpackConfig.entry).forEach((key) => {
         webpackConfig.entry[key] = hotPrefix.concat(webpackConfig.entry[key]);
       });
-      webpackConfig.devtool = 'cheap-module-source-map';
+      if (Object.keys(webpackConfig.entry).length === 0) {
+        console.log("[devserver] no file to compile; quit.");
+        return;
+      }
+      webpackConfig.devtool = "cheap-module-source-map";
       // prefix with "/" to make it as absolute path for memfs
-      webpackConfig.output.path = '/';
+      webpackConfig.output.path = "/";
       webpackConfig.output.publicPath = `${serveFilePath}/`; // webpackConfig.output.path;
       webpackConfig.plugins = [
         new webpack.DefinePlugin({
-          'process.env': {
+          "process.env": {
             NODE_ENV: '"development"',
             IS_BROWSER: true,
           },
         }),
         new webpack.HotModuleReplacementPlugin(),
-      ].concat(webpackConfig.plugins).filter(Boolean);
+      ]
+        .concat(webpackConfig.plugins)
+        .filter(Boolean);
 
       postProcessConfig(webpackConfig);
       const compiler = webpack(webpackConfig);
@@ -61,12 +71,19 @@ module.exports = function runDevServer(opts) {
       compiler.__doneCallbacks = [];
       compiler.__compileCallbacks = [];
 
-      compiler.plugin('compile', x => compiler.__compileCallbacks.forEach(cb => cb(x)));
-      compiler.plugin('done', x => compiler.__doneCallbacks.forEach(cb => cb(x)));
-      const isLinux = /linux/.test(require('os').platform());
-      const watching = compiler.watch({ aggregateTimeout: 200, poll: isLinux ? 1000 : false }, (err) => {
-        if (err) throw err;
-      });
+      compiler.plugin("compile", (x) =>
+        compiler.__compileCallbacks.forEach((cb) => cb(x))
+      );
+      compiler.plugin("done", (x) =>
+        compiler.__doneCallbacks.forEach((cb) => cb(x))
+      );
+      const isLinux = /linux/.test(require("os").platform());
+      const watching = compiler.watch(
+        { aggregateTimeout: 200, poll: isLinux ? 1000 : false },
+        (err) => {
+          if (err) throw err;
+        }
+      );
       compiler.__watching = watching;
 
       compiler.__doneCallbacks.push((stats) => {
@@ -84,14 +101,14 @@ module.exports = function runDevServer(opts) {
       const eventStream = createEventStream(10 * 1000);
       compiler.__compileCallbacks.push(() => {
         console.log(`webpack${id} building...`);
-        eventStream.publish({ action: 'building' });
+        eventStream.publish({ action: "building" });
       });
 
       compiler.__doneCallbacks.push((stats) => {
         stats = stats.toJson();
         console.log(`webpack${id} built ${stats.hash} in ${stats.time}ms`);
         eventStream.publish({
-          action: 'built',
+          action: "built",
           time: stats.time,
           hash: stats.hash,
           warnings: stats.warnings || [],
@@ -105,52 +122,58 @@ module.exports = function runDevServer(opts) {
     }
 
     // dumb init compiler first
-    getCompiler();
+    const c = getCompiler();
+    if (!c) return; // if c is null, means nothing to compile
 
     function tree(data) {
       function isDir(item) {
-        if (typeof item !== 'object') return false;
-        return item[''] === true;
+        if (typeof item !== "object") return false;
+        return item[""] === true;
       }
 
       function isFile(item) {
-        if (typeof item !== 'object') return false;
-        return !item[''];
+        if (typeof item !== "object") return false;
+        return !item[""];
       }
 
       const paths = [];
 
       function traverse(item, mpath) {
         mpath = mpath || [];
-        if (isDir(item)) return Object.keys(item).forEach(k => traverse(item[k], mpath.concat(k)));
+        if (isDir(item))
+          return Object.keys(item).forEach((k) =>
+            traverse(item[k], mpath.concat(k))
+          );
         if (isFile(item)) return paths.push(mpath);
       }
 
-      Object.keys(data).forEach(k => traverse(data[k], ['', k]));
-      return paths.map(p => p.join('/'));
+      Object.keys(data).forEach((k) => traverse(data[k], ["", k]));
+      return paths.map((p) => p.join("/"));
     }
 
     function serveFile(context) {
-      let p = context.path.replace(serveFilePath, '');
-      p = p.replace('//', '/').replace('//', '/'); // remove accidental '//'
+      let p = context.path.replace(serveFilePath, "");
+      p = p.replace("//", "/").replace("//", "/"); // remove accidental '//'
 
       try {
         const compiler = getCompiler();
         const mfs = compiler.outputFileSystem;
         const treeData = tree(mfs.data);
 
-        if (p === '/' || p === '') {
-          context.body = `<h1>File List:</h1>${treeData.map(x => `<a href="${serveFilePath + x}">${x}<a/>`).join('<br />')}`;
+        if (p === "/" || p === "") {
+          context.body = `<h1>File List:</h1>${treeData
+            .map((x) => `<a href="${serveFilePath + x}">${x}<a/>`)
+            .join("<br />")}`;
           return;
         }
 
-        const content = mfs.readFileSync(p, 'utf8');
-        context.set('Access-Control-Allow-Origin', '*'); // To support XHR, etc.
-        context.set('Content-Type', 'application/x-javascript; char-set=utf-8');
-        context.set('Content-Length', content.length);
+        const content = mfs.readFileSync(p, "utf8");
+        context.set("Access-Control-Allow-Origin", "*"); // To support XHR, etc.
+        context.set("Content-Type", "application/x-javascript; char-set=utf-8");
+        context.set("Content-Length", content.length);
         context.body = content;
       } catch (e) {
-        if (p.indexOf('.json') > -1) return; // do not log for the json corner case
+        if (p.indexOf(".json") > -1) return; // do not log for the json corner case
         console.log(`[devserver] request file ${p} meet error`, e.stack);
       }
     }
@@ -169,19 +192,23 @@ module.exports = function runDevServer(opts) {
       getURL(tplPath) {
         return tplPath
           .replace(templatePath, serveFilePath)
-          .replace(/(^\/^\/)/, '/')
-          .replace(/(js|jsx)$/, 'js');
+          .replace(/(^\/^\/)/, "/")
+          .replace(/(js|jsx)$/, "js");
       },
     };
 
-    console.log(`dev server is running. visit ${serveFilePath} to see file compiled`);
+    console.log(
+      `dev server is running. visit ${serveFilePath} to see file compiled`
+    );
 
     watch({
       path: templatePath,
-      name: 'devserver',
+      name: "devserver",
       pattern: /index\.jsx?$/,
-      callback(file/* , info */) {
-        const rp = path.relative(templatePath, file).replace(/index\.jsx?$/, 'index.js');
+      callback(file /* , info */) {
+        const rp = path
+          .relative(templatePath, file)
+          .replace(/index\.jsx?$/, "index.js");
         const compiler = getCompiler();
         if (!compiler.outputFileSystem.existsSync(`/${rp}`)) {
           compiler.__watching.close(noop); // stop watching
@@ -195,4 +222,3 @@ module.exports = function runDevServer(opts) {
     });
   };
 };
-
