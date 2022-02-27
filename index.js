@@ -198,6 +198,7 @@ function run(args, options) {
       console.log(`add file${f}`);
       mocha.addFile(f);
     });
+    mocha.options.jobs = 1;
     mocha.run((failures) => {
       console.log('did run');
       process.exit(failures); // exit with non-zero status if there were failures
