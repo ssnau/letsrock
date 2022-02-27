@@ -109,12 +109,14 @@ function run(args, options) {
       // use koa-static-namespace
       app.use(kstatic(rockOptions.to, { namespace: rockOptions.serveFilePath, maxage: MAX_AGE }));
       if (target === 'dev') {
-	if (options.pages) rockOptions.devServerWhitelistPage = options.pages;
+        if (options.pages) rockOptions.devServerWhitelistPage = options.pages;
         require('./devserver')(rockOptions)(app);
         watchdog(rockOptions, app);
       }
       app.koa.keys = rockOptions.keys || ['default key'];
       app.start();
+      // write .ROCK_PATH so that project can test
+      fs.writeFileSync(path.join(cwd, '.ROCK_PATH'), __dirname, 'utf8');
       return app;
     });
   }

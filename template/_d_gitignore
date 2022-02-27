@@ -7,3 +7,4 @@ package-lock.json
 inline.min.js
 inline.min.css
 HASH
+.ROCK_PATH
