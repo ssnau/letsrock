@@ -187,7 +187,10 @@ function run(args, options) {
         if (absfile.indexOf('/.git/') > -1) return false;
         return true;
       },
-    }).filter(s => s.indexOf('spec.js') > 0);
+    }).filter(s => /spec\.[t|j]s$/.test(s) > 0).filter(s => {
+        if (target2) return s.indexOf(target2) > -1;
+        return true;
+    });
     const Mocha = require('mocha');
     const mocha = new Mocha();
     console.log(`files${files}`);
@@ -195,12 +198,9 @@ function run(args, options) {
       console.log(`add file${f}`);
       mocha.addFile(f);
     });
-    console.log('run mocha');
     mocha.run((failures) => {
       console.log('did run');
-      process.on('exit', () => {
-        process.exit(failures); // exit with non-zero status if there were failures
-      });
+      process.exit(failures); // exit with non-zero status if there were failures
     });
   }
 
