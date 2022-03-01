@@ -1,4 +1,5 @@
 /* eslint-disable global-require, no-param-reassign, no-console, func-names */
+// THIS FILE IS RETIRED.
 
 const fs = require('fs');
 const path = require('path');
