@@ -33,6 +33,7 @@ function getFilesFromDir(dir) {
 function safeRequire(f) {
   try {
     // eslint-disable-next-line
+    if (/\.spec\./.test(f)) return;
     require(f);
   } catch (e) {
     console.log(e);

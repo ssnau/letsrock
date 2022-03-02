@@ -106,6 +106,7 @@ function getWebpackConfig(opts) {
           this.plugin('done', (stats) => {
             global.HASH = stats.hash;
             if (__IS_DEV__) return;
+            if (stats.compilation.errors.length) console.log(stats.compilation.errors);
 
             console.log('[webpack] minify files');
             const startTime = Date.now();
